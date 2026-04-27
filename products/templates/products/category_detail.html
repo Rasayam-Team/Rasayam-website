@@ -1,0 +1,67 @@
+{% extends 'products/base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="collection-page" style="background: #fff; min-height: 80vh;">
+    
+    <header class="collection-header text-center" style="padding: 80px 0 40px; border-bottom: 1px solid var(--border);">
+        <div class="container">
+            <span style="letter-spacing: 4px; font-size: 0.7rem; text-transform: uppercase; color: var(--gold); font-weight: 600;">The Regional Edit</span>
+            <h1 class="playfair" style="font-size: 3.5rem; margin-top: 10px; margin-bottom: 20px;">{{ category.name }}</h1>
+            {% if category.description %}
+            <p style="max-width: 700px; margin: 0 auto; color: #666; line-height: 1.8; font-size: 1.1rem;">
+                {{ category.description }}
+            </p>
+            {% endif %}
+        </div>
+    </header>
+
+    <section class="container" style="padding: 60px 0;">
+        <div class="collection-controls" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px; border-bottom: 1px solid #eee; padding-bottom: 20px;">
+            <p style="font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; color: #999;">
+                Showing {{ products|length }} Artworks
+            </p>
+            <div class="filter-sort">
+                <span style="font-size: 0.8rem; letter-spacing: 1px; color: var(--royal);">SORT BY: NEWEST</span>
+            </div>
+        </div>
+
+        <div class="product-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 40px;">
+            {% for product in products %}
+            <div class="product-card" style="transition: 0.4s;">
+                <div class="img-wrapper" style="overflow: hidden; background: #fcfcfc; aspect-ratio: 3/4; position: relative;">
+                    {% if product.image %}
+                        <img src="{{ product.image.url }}" alt="{{ product.name }}" style="width: 100%; height: 100%; object-fit: cover; transition: 0.6s ease;">
+                    {% endif %}
+                            
+                    <button class="btn-gold" 
+                            style="position: absolute; bottom: 0; left: 0; width: 100%; padding: 12px; font-size: 0.7rem; opacity: 0.9; cursor: pointer; background: #1a1a1a; color: white; border: none;"
+                            onclick="openQuickView('{{ product.name|escapejs }}', {{ product.price }}, '{{ product.description|escapejs }}', '{{ product.image.url }}')">
+                        QUICK VIEW
+                    </button>      
+                </div>
+                        
+                <div class="product-info" style="padding: 20px 0; text-align: left;">
+                        <h3 class="playfair" style="font-size: 1.2rem; margin-bottom: 8px; font-weight: 400;">{{ product.name }}</h3>
+                        <p style="color: var(--gold); font-weight: 600; font-size: 1.1rem; margin-bottom: 15px;">₹{{ product.price|stringformat:"d" }}</p>
+
+                    <div class="product-action-container" 
+                        data-id="{{ product.id }}" 
+                        data-name="{{ product.name }}" 
+                        data-price="{{ product.price }}" 
+                        data-img="{{ product.image.url }}">
+                        <button class="btn-gold" 
+                                style="width: 100%; padding: 12px; background: transparent; border: 1px solid #1a1a1a; cursor: pointer;"
+                                onclick="addToCart('{{ product.id }}', '{{ product.name|escapejs }}', {{ product.price }}, '{{ product.image.url }}')">
+                            ADD TO SELECTION
+                        </button>
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+                <p>This collection is currently being curated.</p>
+            {% endfor %}
+        </div>
+    </section>
+</div>
+{% endblock %}

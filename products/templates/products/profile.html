@@ -1,0 +1,84 @@
+{% extends 'products/base.html' %}
+
+{% block content %}
+<section style="padding: 120px 0; background: #fcfaf8; min-height: 100vh;">
+    <div class="container" style="max-width: 1000px; display: grid; grid-template-columns: 320px 1fr; gap: 40px;">
+        
+        <div style="background: #fff; padding: 45px 30px; border: 1px solid #eee; height: fit-content; text-align: center; position: sticky; top: 120px;">
+            <div style="width: 90px; height: 90px; background: #1a1a1a; color: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 25px; font-size: 1.8rem; font-family: 'Playfair Display'; border: 4px solid #fdfaf5;">
+                {{ user.username|first|upper }}
+            </div>
+            <h3 style="font-family: 'Playfair Display'; font-size: 1.6rem; margin-bottom: 5px; color: #1a1a1a;">{{ user.username|upper }}</h3>
+            <p style="font-size: 0.65rem; color: #c5a059; letter-spacing: 3px; text-transform: uppercase; margin-bottom: 30px; font-weight: 700;">Rasayam Member</p>
+            
+            <div style="text-align: left; font-size: 0.85rem; color: #555; border-top: 1px solid #f4f4f4; padding-top: 25px;">
+                <div style="margin-bottom: 18px;">
+                    <span style="display:block; font-size: 0.6rem; text-transform: uppercase; color: #aaa; margin-bottom: 4px;">Registered Email</span>
+                    <strong style="color: #1a1a1a;">{{ user.email }}</strong>
+                </div>
+                <div style="margin-bottom: 18px;">
+                    <span style="display:block; font-size: 0.6rem; text-transform: uppercase; color: #aaa; margin-bottom: 4px;">Contact</span>
+                    <strong style="color: #1a1a1a;">{{ user.customerprofile.phone_number|default:"Not Provided" }}</strong>
+                </div>
+                <div style="margin-bottom: 18px;">
+                    <span style="display:block; font-size: 0.6rem; text-transform: uppercase; color: #aaa; margin-bottom: 4px;">Shipping Muse</span>
+                    <strong style="color: #1a1a1a;">{{ user.customerprofile.city }}, {{ user.customerprofile.state }}</strong>
+                </div>
+            </div>
+
+            <form action="{% url 'logout' %}" method="post" style="display: inline-block; margin-top: 35px;">
+                {% csrf_token %}
+                <button type="submit" 
+                    style="background: none; border: none; padding: 0; font-size: 0.75rem; color: #d9534f; text-decoration: none; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px; border-bottom: 1px solid transparent; transition: 0.3s; cursor: pointer; font-family: inherit;" 
+                    onmouseover="this.style.borderBottom='1px solid #d9534f'" 
+                    onmouseout="this.style.borderBottom='1px solid transparent'">
+                    Logout
+                </button>
+            </form>
+        </div>
+
+        <div style="display: flex; flex-direction: column; gap: 35px;">
+            
+            <div style="background: #1a1a1a; padding: 50px; color: #fff; position: relative; overflow: hidden;">
+                <div style="position: relative; z-index: 2;">
+                    <h4 style="font-family: 'Playfair Display'; font-size: 1.8rem; margin-bottom: 12px; color: #fdfaf5;">Awaiting your next masterpiece?</h4>
+                    <p style="color: #aaa; font-size: 0.95rem; margin-bottom: 30px; line-height: 1.6; max-width: 400px;">Explore the Eternal Collection and find a piece that speaks to your soul.</p>
+                    <a href="{% url 'shop' %}" style="display: inline-block; padding: 15px 35px; background: #c5a059; color: #fff; text-decoration: none; font-size: 0.75rem; letter-spacing: 2px; font-weight: 700; transition: 0.3s;" onmouseover="this.style.background='#b08d4a'" onmouseout="this.style.background='#c5a059'">CONTINUE SHOPPING</a>
+                </div>
+                <div style="position: absolute; right: -20px; bottom: -20px; font-size: 10rem; font-family: 'Playfair Display'; color: rgba(255,255,255,0.03); font-style: italic;">R</div>
+            </div>
+
+            <div style="background: #fff; padding: 45px; border: 1px solid #eee;">
+                <h4 style="font-family: 'Playfair Display'; font-size: 1.4rem; margin-bottom: 30px; border-bottom: 1px solid #f4f4f4; padding-bottom: 15px;">Recent Orders</h4>
+                
+                {% if orders %}
+                    <div style="display: flex; flex-direction: column; gap: 20px;">
+                        {% for order in orders %}
+                        <div style="border: 1px solid #f4f4f4; padding: 25px; display: flex; justify-content: space-between; align-items: center; transition: 0.3s;" onmouseover="this.style.borderColor='#c5a059'">
+                            <div>
+                                <span style="font-size: 0.65rem; color: #999; text-transform: uppercase;">Order #{{ order.id }} &bull; {{ order.created_at|date:"F d, Y" }}</span>
+                                <h5 style="font-family: 'Playfair Display'; font-size: 1.1rem; margin: 8px 0;">{{ order.items.count }} Item(s) Selected</h5>
+                                <p style="font-size: 0.9rem; color: #c5a059; font-weight: 700;">₹{{ order.total_amount }}</p>
+                            </div>
+                            <div style="text-align: right;">
+                                <span style="padding: 6px 15px; font-size: 0.6rem; border-radius: 50px; background: {% if order.status == 'Delivered' %}#e6f4ea; color: #1e7e34;{% else %}#fff9e6; color: #856404;{% endif %} text-transform: uppercase; font-weight: 700; letter-spacing: 1px;">
+                                    {{ order.status }}
+                                </span>
+                                <a href="{% url 'order_detail' order.id %}" style="display: block; margin-top: 10px; font-size: 0.7rem; color: #1a1a1a; text-decoration: underline;">View Details</a>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <div style="padding: 60px; border: 1px dashed #eee; text-align: center; color: #bbb; background: #fafafa;">
+                        <svg width="50" height="50" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="0.5" style="margin-bottom: 20px; color: #ddd;"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"></path><line x1="3" y1="6" x2="21" y2="6"></line></svg>
+                        <p style="font-size: 0.9rem; font-family: 'Playfair Display'; font-style: italic;">The loom is waiting. You haven't placed any orders yet.</p>
+                        <a href="{% url 'shop' %}" style="color: #c5a059; font-size: 0.8rem; text-decoration: underline; margin-top: 10px; display: inline-block;">Discover Heritage</a>
+                    </div>
+                {% endif %}
+            </div>
+
+        </div>
+    </div>
+</section>
+{% endblock %}

@@ -1,0 +1,67 @@
+{% extends 'products/base.html' %}
+{% load static %}
+
+{% block content %}
+<style>
+    .testimonial-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 30px;
+        margin: 40px 0;
+    }
+    .testimonial-card {
+        background: #fff;
+        padding: 40px;
+        border: 1px solid var(--border);
+        transition: 0.3s;
+    }
+    .testimonial-card:hover {
+        box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+        border-color: var(--gold);
+    }
+    .stars { color: var(--gold); margin-bottom: 15px; font-size: 1.2rem; }
+    .customer-name { font-family: 'Playfair Display', serif; font-weight: 700; margin-top: 20px; }
+    .verified { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 1px; color: #999; }
+</style>
+
+<section class="container text-center" style="margin-top: 80px;">
+    <h2 class="playfair" style="font-size: 3rem;">Customer Stories</h2>
+    <p class="subtitle" style="letter-spacing: 3px; text-transform: uppercase; font-size: 0.8rem; color: var(--gold);">Voices from the RASAYAM Community</p>
+</section>
+
+<section class="container">
+    <div class="testimonial-grid">
+        {% for review in reviews %}
+        <div class="testimonial-card">
+            <div class="stars">
+                {% if review.stars == 5 %}★★★★★{% elif review.stars == 4 %}★★★★☆{% else %}★★★☆☆{% endif %}
+            </div>
+            <p style="line-height: 1.8; color: #555 italic;">"{{ review.content }}"</p>
+            <div class="customer-name">— {{ review.customer_name }}</div>
+            {% if review.is_verified %}
+            <span class="verified">Verified Purchase</span>
+            {% endif %}
+        </div>
+        {% empty %}
+        <p class="text-center">No stories shared yet. Be the first!</p>
+        {% endfor %}
+    </div>
+</section>
+
+<section class="philosophy-section" style="background: #fdfdfd; padding: 100px 0; margin: 80px 0; border-top: 1px solid #eee;">
+    <div class="container text-center">
+        <h2 class="playfair" style="font-size: 2.5rem; margin-bottom: 30px;">Our Philosophy</h2>
+        <div class="philosophy-content" style="max-width: 800px; margin: 0 auto; color: #777; line-height: 2;">
+            <p>RASAYAM was born from a desire to preserve the heritage of Indian craftsmanship while catering to the modern woman's lifestyle. We believe that elegance shouldn't be a sacrifice for comfort.</p>
+        </div>
+    </div>
+</section>
+
+<section class="container text-center" style="margin-bottom: 100px;">
+    <div class="feedback-box" style="padding: 60px; border: 1px dashed var(--gold); background: #fff;">
+        <h3 class="playfair">Shared your own experience?</h3>
+        <p>We’d love to feature your story. Tag us <strong>@RASAYAM_Official</strong></p>
+        <a href="{% url 'contact' %}" class="btn-gold" style="display: inline-block; margin-top: 25px; padding: 15px 40px; text-decoration: none;">Send Feedback</a>
+    </div>
+</section>
+{% endblock %}

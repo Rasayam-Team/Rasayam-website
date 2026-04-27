@@ -1,0 +1,233 @@
+{% extends 'products/base.html' %}
+{% load static %}
+
+{% block content %}
+<style>
+    /* Special Styling for the Royal Form */
+    .contact-page-container {
+        background-color: #fff;
+        color: var(--royal);
+    }
+
+    .contact-wrapper {
+        display: flex;
+        gap: 80px;
+        margin-top: 40px;
+        align-items: flex-start;
+    }
+
+    .contact-info { flex: 1; }
+    
+    .contact-form-container { 
+        flex: 1.5; 
+        background: white; 
+        padding: 50px; 
+        border: 1px solid var(--border);
+        box-shadow: 0 15px 40px rgba(0,0,0,0.03);
+    }
+
+    /* Django Messages Styling */
+    .messages {
+        list-style: none;
+        padding: 0;
+        margin-bottom: 20px;
+    }
+    .alert {
+        padding: 15px;
+        font-size: 0.9rem;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+        border: 1px solid var(--gold);
+        background: #fffdf5;
+        color: var(--royal);
+        margin-bottom: 20px;
+    }
+
+    .info-item { margin-bottom: 35px; }
+    
+    .info-label { 
+        display: block; 
+        font-size: 0.7rem; 
+        text-transform: uppercase; 
+        letter-spacing: 2px; 
+        color: var(--gold); 
+        margin-bottom: 8px;
+        font-weight: 600;
+    }
+    
+    .info-detail { 
+        font-size: 1.1rem; 
+        font-family: 'Playfair Display', serif; 
+        color: var(--royal);
+    }
+    
+    .royal-form .form-group { margin-bottom: 25px; }
+    
+    .royal-form label { 
+        display: block; 
+        font-size: 0.7rem; 
+        text-transform: uppercase; 
+        letter-spacing: 1.5px; 
+        margin-bottom: 10px;
+        font-weight: 600;
+        color: #666;
+    }
+
+    .royal-form input, 
+    .royal-form select, 
+    .royal-form textarea {
+        width: 100%;
+        padding: 15px;
+        border: 1px solid #eee;
+        background: #fcfcfc;
+        font-family: 'Poppins', sans-serif;
+        outline: none;
+        transition: all 0.3s ease;
+        border-radius: 0; /* Sharp luxury edges */
+    }
+
+    .royal-form input:focus, 
+    .royal-form select:focus,
+    .royal-form textarea:focus {
+        border-color: var(--gold);
+        background: white;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.02);
+    }
+
+    .form-row {
+        display: flex;
+        gap: 20px;
+    }
+    .form-row .form-group { flex: 1; }
+
+    /* Button Styling refinement */
+    .btn-gold {
+        background: var(--royal); /* Default luxury dark */
+        color: white;
+        border: 1px solid var(--royal);
+        cursor: pointer;
+        transition: 0.4s;
+    }
+    .btn-gold:hover {
+        background: var(--gold);
+        border-color: var(--gold);
+        letter-spacing: 4px;
+    }
+
+    @media (max-width: 992px) {
+        .contact-wrapper { flex-direction: column; gap: 50px; }
+        .contact-form-container { padding: 30px; width: 100%; }
+        .form-row { flex-direction: column; gap: 0; }
+    }
+</style>
+
+<div class="contact-page-container">
+    <header class="text-left" style="padding: 20px 0 40px; border-bottom: 1px solid var(--border);">
+        <div class="container">
+            <h2 class="playfair" style="font-size: 3rem; margin-bottom: 5px;">Connect With Us</h2>
+            <p style="letter-spacing: 2px; font-size: 0.75rem; text-transform: uppercase; color: #999;">We're here to assist with your royal wardrobe.</p>
+        </div>
+    </header>
+
+    <section class="container" style="padding: 80px 0;">
+        <div class="contact-wrapper">
+            <div class="contact-info">
+                <h3 class="playfair" style="font-size: 2.2rem; margin-bottom: 20px;">Bespoke Inquiries</h3>
+                <p style="color: #777; margin-bottom: 40px; line-height: 1.8;">Whether it's a sizing question, a custom order for a wedding, or wholesale interest, our boutique concierge is at your service.</p>
+                
+                <div class="info-item">
+                    <span class="info-label">Email Concierge</span>
+                    <p class="info-detail">concierge@rasayam.com</p>
+                </div>
+                
+                <div class="info-item">
+                    <span class="info-label">Boutique Hours</span>
+                    <p class="info-detail">Mon - Sat: 10:00 AM - 7:00 PM (IST)</p>
+                </div>
+
+                <div class="info-item">
+                    <span class="info-label">Digital Atelier</span>
+                    <div class="social-links" style="font-family: 'Playfair Display', serif; font-size: 1.1rem; margin-top: 10px;">
+                        <a href="https://www.instagram.com/rasayam_official?utm_source=qr&igsh=dG1oc3FxZ3Jydjl5" 
+                            target="_blank" 
+                            rel="noopener noreferrer" 
+                            style="text-decoration: none; color: var(--royal); border-bottom: 1px solid var(--gold);">
+                            Instagram
+                        </a> &nbsp;•&nbsp; 
+                        <a href="https://www.facebook.com/rasayamofficial" 
+                            target="_blank" 
+                            rel="noopener noreferrer" 
+                            style="text-decoration: none; color: var(--royal); border-bottom: 1px solid var(--gold);">
+                            Facebook
+                        </a> &nbsp;•&nbsp; 
+                        <a href="https://wa.me/919876543210" 
+                            target="_blank" 
+                            rel="noopener noreferrer" 
+                            style="text-decoration: none; color: var(--royal); border-bottom: 1px solid var(--gold);">
+                            WhatsApp
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="contact-form-container">
+                {% if messages %}
+                <div class="messages">
+                    {% for message in messages %}
+                    <div class="alert alert-{{ message.tags }}">
+                        {{ message }}
+                    </div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+
+                <form id="contactForm" method="POST" class="royal-form">
+                    {% csrf_token %}
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="id_full_name">Full Name</label>
+                            <input type="text" id="id_full_name" name="full_name" placeholder="e.g. Aditi Sharma" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="id_email">Email Address</label>
+                            <input type="email" id="id_email" name="email" placeholder="email@example.com" required>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="id_subject">Subject</label>
+                        <select id="id_subject" name="subject" required>
+                            <option value="" disabled selected>Select an inquiry type</option>
+                            <option value="order">Order Status</option>
+                            <option value="custom">Custom Fitting</option>
+                            <option value="wholesale">Wholesale / B2B</option>
+                            <option value="other">General Question</option>
+                            <option value="feedback">Feedback & Suggestions</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="id_message">Your Message</label>
+                        <textarea id="id_message" name="message" rows="5" placeholder="How can we help you create your perfect look?" required></textarea>
+                    </div>
+                    
+                    <button type="submit" class="btn-gold" style="width: 100%; border: none; padding: 18px; letter-spacing: 3px; font-weight: 600;">
+                        SEND
+                    </button>
+                </form>
+            </div>
+        </div>
+    </section>
+</div>
+
+<script>
+    // Simple UI interaction to show "Sending..." when clicked
+    const form = document.getElementById('contactForm');
+    form.onsubmit = function() {
+        const btn = form.querySelector('button');
+        btn.innerHTML = "SENDING...";
+        btn.style.opacity = "0.7";
+        btn.disabled = true;
+    };
+</script>
+{% endblock %}

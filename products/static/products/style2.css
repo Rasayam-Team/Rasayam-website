@@ -1,0 +1,417 @@
+/* =========================================
+   CORE SETUP & VARIABLES
+   ========================================= */
+:root {
+    --gold: #c5a059;
+    --royal: #1a1a1a;
+    --white: #ffffff;
+    --ivory: #fdfaf5;
+    --border: #eeeeee;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body { 
+    font-family: 'Poppins', sans-serif; 
+    background: var(--white); 
+    color: var(--royal); 
+    /* Important: 100px total to clear the Announcement Bar (40px) + Nav (60px) */
+    padding-top: 100px; 
+}
+
+.container { max-width: 1200px; margin: 0 auto; padding: 0 5%; }
+
+/* =========================================
+   ANNOUNCEMENT BAR (FIXED TOP)
+   ========================================= */
+.announcement-bar {
+    background-color: var(--royal);
+    color: var(--gold);
+    overflow: hidden;
+    padding: 10px 0;
+    font-size: 0.65rem;
+    letter-spacing: 3px;
+    font-weight: 600;
+    position: fixed;
+    top: 0;
+    width: 100%;
+    z-index: 3000; /* Highest priority */
+}
+
+.marquee-content {
+    display: flex;
+    white-space: nowrap;
+    animation: marquee-scroll 30s linear infinite;
+}
+
+.marquee-content span { padding-right: 50px; }
+
+@keyframes marquee-scroll {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+}
+
+/* =========================================
+   NAVIGATION (SITS BELOW ANNOUNCEMENT)
+   ========================================= */
+#main-nav {
+    position: fixed;
+    top: 38px; /* Height of announcement bar */
+    width: 100%;
+    height: 60px;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(8px);
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    z-index: 2000;
+}
+
+.nav-flex { display: flex; justify-content: space-between; align-items: center; width: 100%; }
+.logo a { font-family: 'Playfair Display', serif; font-size: 1.5rem; font-weight: 700; letter-spacing: 4px; text-decoration: none; color: var(--royal); }
+.nav-links { display: flex; list-style: none; gap: 30px; }
+.nav-links a { text-decoration: none; color: var(--royal); font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; }
+
+/* =========================================
+   SECTION 1: STATIC HERO (Local Image + Text)
+   ========================================= */
+.static-hero {
+    width: 100%;
+    height: 75vh; /* Large, classy height */
+    background-size: cover;
+    background-position: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    position: relative;
+    color: #fff;
+}
+
+/* The dark tint so text is readable */
+.static-hero::before {
+    content: "";
+    position: absolute;
+    top:0; left:0; width:100%; height:100%;
+    background: rgba(0,0,0,0.3);
+    z-index: 1;
+}
+
+.hero-text {
+    position: relative;
+    z-index: 2;
+}
+
+.hero-text h1 { font-family: 'Playfair Display', serif; font-size: 4rem; margin-bottom: 10px; }
+.hero-text p { letter-spacing: 5px; text-transform: uppercase; font-size: 0.9rem; margin-bottom: 25px; }
+
+.btn-shop {
+    display: inline-block;
+    padding: 12px 35px;
+    background: #fff;
+    color: #000;
+    text-decoration: none;
+    font-weight: 600;
+    transition: 0.3s;
+}
+.btn-shop:hover { background: #000; color: #fff; }
+
+/* =========================================
+   SECTION 2: BANNER SCROLLER (Rolex/Sunset)
+   ========================================= */
+.banner-scroller { padding: 80px 0; background: #fff; }
+
+.swiper {
+    width: 90%;
+    height: 60vh;
+    border-radius: 4px;
+}
+
+.slide-img {
+    width: 100%;
+    height: 100%;
+    background-size: cover;
+    background-position: center;
+}
+
+/* THE DASH LINES (Pagination) */
+.swiper-pagination-bullet {
+    width: 30px !important;
+    height: 3px !important;
+    border-radius: 0 !important;
+    background: #000 !important;
+    opacity: 0.2;
+    transition: 0.3s;
+}
+
+.swiper-pagination-bullet-active {
+    opacity: 1 !important;
+    width: 50px !important; /* Active dash is longer */
+}
+
+/* =========================================
+   SECTION 3: CATEGORIES (Rounded Boxes)
+   ========================================= */
+.category-section { padding: 80px 0; }
+.category-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 30px; }
+
+.category-img-box {
+    background-color: #f4f4f4;
+    border-radius: 25px; /* Luxury rounded feel */
+    height: 280px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    margin-bottom: 15px;
+    transition: 0.3s;
+}
+
+.category-card:hover .category-img-box { transform: translateY(-8px); }
+.category-img-box img { width: 85%; height: 85%; object-fit: contain; }
+
+/* =========================================
+   SECTION 4: OFFERS (Beige Boxes)
+   ========================================= */
+.offers-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; }
+.offer-card { background-color: #f3e5ab; padding: 30px; border-radius: 4px; min-height: 160px; display: flex; flex-direction: column; justify-content: space-between; }
+
+/* =========================================
+   FOOTER (DARK 4-COLUMN)
+   ========================================= */
+.main-footer { background-color: #111; color: #fff; padding: 80px 0 30px; margin-top: 100px; }
+.footer-top { display: grid; grid-template-columns: repeat(4, 1fr); gap: 40px; border-bottom: 1px solid #333; padding-bottom: 40px; }
+.footer-col h4 { color: var(--gold); margin-bottom: 25px; font-size: 0.9rem; letter-spacing: 2px; }
+.footer-col ul { list-style: none; }
+.footer-col ul li { margin-bottom: 12px; }
+.footer-col ul li a { color: #999; text-decoration: none; font-size: 0.85rem; transition: 0.3s; }
+.footer-col ul li a:hover { color: #fff; padding-left: 5px; }
+
+.footer-bottom { padding-top: 30px; display: flex; justify-content: space-between; color: #666; font-size: 0.75rem; }
+/* =========================================
+   RESTORED 4-COLUMN FOOTER
+   ========================================= */
+.main-footer {
+    background-color: #111; /* Solid black-ish background */
+    color: #fff;
+    padding: 80px 0 40px;
+    margin-top: 80px;
+}
+
+.footer-top {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr); /* Forces 4 columns */
+    gap: 40px;
+    border-bottom: 1px solid #333;
+    padding-bottom: 50px;
+}
+
+.footer-logo {
+    font-family: 'Playfair Display', serif;
+    font-size: 2.2rem;
+    margin-bottom: 25px;
+    color: var(--white);
+    letter-spacing: 3px;
+}
+
+.footer-col h4 {
+    font-size: 0.9rem;
+    margin-bottom: 30px;
+    color: var(--gold); /* Your brand gold */
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
+
+.footer-col ul { list-style: none; }
+.footer-col ul li { margin-bottom: 15px; }
+.footer-col ul li a {
+    color: #999;
+    text-decoration: none;
+    transition: 0.3s;
+    font-size: 0.85rem;
+}
+
+.footer-col ul li a:hover {
+    color: #fff;
+    padding-left: 5px;
+}
+
+.contact-info p, .app-links p {
+    font-size: 0.85rem;
+    color: #ccc;
+    margin-bottom: 10px;
+}
+
+/* Fix for mobile screens so it doesn't look squashed */
+@media (max-width: 992px) {
+    .footer-top { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 576px) {
+    .footer-top { grid-template-columns: 1fr; }
+}
+.user-menu:hover .dropdown {
+    display: block !important;
+    top: 50px;
+    right: 0;
+    min-width: 120px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+
+/* =========================================
+   ADD-ON: SHOP & PRODUCT GRID 
+   ========================================= */
+.shop-section { padding: 60px 0; }
+
+.product-grid { 
+    display: grid; 
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); 
+    gap: 40px; 
+}
+
+.product-card { 
+    background: var(--white); 
+    transition: 0.4s; 
+}
+
+.product-card:hover { transform: translateY(-5px); }
+
+.product-img-wrapper {
+    width: 100%;
+    height: 400px;
+    overflow: hidden;
+    position: relative;
+    background: #f9f9f9;
+}
+
+.product-img-wrapper img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: 0.5s;
+}
+
+.product-card:hover .product-img-wrapper img { transform: scale(1.05); }
+
+.product-info { padding: 20px 0; text-align: left; }
+.product-info h4 { 
+    font-family: 'Playfair Display', serif; 
+    font-size: 1.1rem; 
+    margin-bottom: 8px; 
+}
+
+.product-info .price { 
+    font-weight: 600; 
+    color: var(--royal); 
+    margin-bottom: 15px; 
+}
+
+/* =========================================
+   UNIFIED CART DESIGN
+   ========================================= */
+
+.cart-layout { 
+    display: flex; 
+    gap: 50px; 
+    margin-top: 20px; 
+    align-items: flex-start; 
+}
+
+.cart-items-wrapper { flex: 2; }
+
+/* Fixed naming to match our HTML ID */
+.cart-summary { 
+    flex: 1; 
+    background: #fff; 
+    padding: 35px; 
+    border: 1px solid var(--border); 
+    position: sticky; 
+    top: 120px; /* Better spacing from the nav */
+    box-shadow: 0 10px 30px rgba(0,0,0,0.02);
+}
+
+.cart-item {
+    display: flex;
+    align-items: center;
+    gap: 25px;
+    padding: 25px 0;
+    border-bottom: 1px solid var(--border);
+}
+
+.cart-item img {
+    width: 100px;
+    height: 135px;
+    object-fit: cover;
+    border: 1px solid var(--border);
+}
+
+/* --- Added from your existing code for extra detail --- */
+
+.item-details h4 { 
+    font-family: 'Playfair Display', serif; 
+    font-size: 1.25rem; 
+    margin-bottom: 5px;
+}
+
+.remove-btn {
+    margin-left: auto;
+    background: none;
+    border: 1px solid #ddd;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    color: #999;
+}
+
+.remove-btn:hover { 
+    background: #1a1a1a; 
+    color: #fff; 
+    border-color: #1a1a1a; 
+    transform: rotate(90deg); /* Subtle boutique touch */
+}
+
+/* Smooth hover for category/shop buttons */
+.product-img-wrapper:hover .btn-gold {
+    transform: translateY(0) !important;
+    opacity: 1 !important;
+}
+
+/* =========================================
+   DYNAMIC QTY SELECTOR (Matches Cart.js)
+   ========================================= */
+.qty-selector {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border: 1px solid var(--royal);
+    padding: 8px 15px;
+    width: 100%;
+    margin-top: 10px;
+}
+
+.qty-btn {
+    background: none;
+    border: none;
+    font-size: 1.2rem;
+    cursor: pointer;
+    padding: 0 10px;
+}
+
+.btn-gold {
+    background: var(--royal);
+    color: var(--white);
+    padding: 12px;
+    border: none;
+    font-weight: 600;
+    letter-spacing: 2px;
+    cursor: pointer;
+    transition: 0.3s;
+    text-transform: uppercase;
+    font-size: 0.75rem;
+}
+
+.btn-gold:hover { background: var(--gold); }

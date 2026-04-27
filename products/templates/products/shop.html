@@ -1,0 +1,109 @@
+{% extends 'products/base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="shop-wrapper"> 
+    
+    <header class="text-center" style="padding: 40px 0 30px; background: #fff; border-bottom: 1px solid var(--border);">
+        <span class="subtitle" style="letter-spacing: 3px; font-size: 0.7rem; color: var(--gold); text-transform: uppercase; display: block; margin-bottom: 8px;">
+            The Full Collection
+        </span>
+        <h1 class="playfair" style="font-size: 2.8rem; margin: 0; line-height: 1.1;">Handcrafted Elegance</h1>
+        <p style="max-width: 600px; margin: 15px auto 0; color: #888; font-size: 0.85rem; line-height: 1.6;">
+            Explore our curated selection of heritage craftsmanship reimagined for the modern muse.
+        </p>
+    </header>
+
+    <section class="container" style="padding: 60px 0;">
+        <div class="product-grid">
+            {% for product in items %}
+            <div class="product-card">
+                <div class="product-img-wrapper" style="position: relative; height: 420px; overflow: hidden; background: #f9f9f9;">
+                    {% if product.image %}
+                        <img src="{{ product.image.url }}" alt="{{ product.name }}" style="width: 100%; height: 100%; object-fit: cover; transition: 0.6s ease;">
+                    {% else %}
+                        <img src="https://via.placeholder.com/300x400" alt="No Image">
+                    {% endif %}
+                    
+                    <button class="btn-gold quick-view-trigger" 
+                            style="position: absolute; bottom: 0; left: 0; width: 100%; padding: 15px; font-size: 0.7rem; opacity: 0.95; cursor: pointer;"
+                            onclick="openQuickView('{{ product.id }}', '{{ product.name|escapejs }}', {{ product.price }}, '{{ product.description|escapejs }}', '{{ product.image.url }}')">
+                        QUICK VIEW
+                    </button>
+                </div>
+
+                <div class="product-info" style="padding: 20px 0;">
+                    <h3 class="playfair" style="font-size: 1.1rem; margin-bottom: 5px; font-weight: 600;">{{ product.name }}</h3>
+                    <p style="color: var(--gold); font-weight: 700; font-size: 1.1rem;">₹{{ product.price|stringformat:"d" }}</p>
+                    
+                    <div class="product-action-container">
+                        <a href="{% url 'add_to_cart' product.id %}" style="text-decoration: none;">
+                            <button class="btn-gold" style="width: 100%; padding: 12px; cursor: pointer;">
+                                ADD TO SELECTION
+                            </button>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <div style="grid-column: 1/-1; text-align: center; padding: 100px 0;">
+                <p class="playfair" style="font-size: 1.2rem; color: #999;">The looms are busy. New arrivals coming soon.</p>
+            </div>
+            {% endfor %}
+        </div>
+    </section>
+</div>
+
+<div id="quickview-modal" style="display:none; position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 5000; align-items: center; justify-content: center; padding: 20px; backdrop-filter: blur(8px);">
+    <div style="background: white; max-width: 900px; width: 100%; display: flex; position: relative; max-height: 90vh; border-radius: 2px; overflow: hidden; box-shadow: 0 20px 50px rgba(0,0,0,0.3);">
+        <span onclick="closeQuickView()" style="position: absolute; right: 25px; top: 15px; font-size: 35px; cursor: pointer; z-index: 10; color: #1a1a1a;">&times;</span>
+        
+        <div style="flex: 1; background: #fdfaf5; display: flex; align-items: center; justify-content: center; overflow: hidden;">
+            <img id="qv-img" src="" style="width: 100%; height: 100%; object-fit: cover;">
+        </div>
+        
+        <div style="flex: 1; padding: 60px; display: flex; flex-direction: column; justify-content: center; background: #fff;">
+            <span style="letter-spacing: 3px; font-size: 0.7rem; color: var(--gold); margin-bottom: 12px; font-weight: 600;">RASAYAM EXCLUSIVE</span>
+            <h2 id="qv-name" class="playfair" style="font-size: 2.4rem; margin-bottom: 15px; line-height: 1.2;"></h2>
+            <p id="qv-price" style="font-size: 1.6rem; color: var(--gold); font-weight: 700; margin-bottom: 25px;"></p>
+            
+            <div style="height: 1px; background: #f0f0f0; margin-bottom: 25px;"></div>
+            <p id="qv-desc" style="color: #666; margin-bottom: 35px; line-height: 1.8; font-size: 0.95rem;"></p>
+            
+            <a id="qv-add-link" href="#">
+                <button class="btn-gold" style="width: 100%; padding: 18px; font-weight: 700; cursor: pointer;">
+                    ADD TO SELECTION
+                </button>
+            </a>
+            
+            <p style="margin-top: 35px; font-size: 0.75rem; color: #aaa; font-style: italic; border-top: 1px solid #f9f9f9; padding-top: 20px;">
+                ✨ Complimentary boutique packaging & shipping included.
+            </p>
+        </div>
+    </div>
+</div>
+
+<script>
+    function openQuickView(id, name, price, desc, img) {
+        document.getElementById('qv-name').innerText = name;
+        document.getElementById('qv-price').innerText = '₹' + price.toLocaleString('en-IN');
+        document.getElementById('qv-desc').innerText = desc;
+        document.getElementById('qv-img').src = img;
+        
+        // Dynamically update the link for the Add to Cart button in the modal
+        const addLink = document.getElementById('qv-add-link');
+        addLink.href = `/add-to-cart/${id}/`; // Ensure this matches your urls.py path
+        
+        document.getElementById('quickview-modal').style.display = 'flex';
+    }
+
+    function closeQuickView() {
+        document.getElementById('quickview-modal').style.display = 'none';
+    }
+
+    window.onclick = function(event) {
+        let modal = document.getElementById('quickview-modal');
+        if (event.target == modal) closeQuickView();
+    }
+</script>
+{% endblock %}

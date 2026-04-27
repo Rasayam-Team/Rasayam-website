@@ -1,0 +1,66 @@
+{% extends 'products/base.html' %}
+
+{% block content %}
+<section class="auth-section" style="padding: 120px 0; background-color: #fdfaf5; min-height: 90vh; display: flex; align-items: center;">
+    <div class="container" style="max-width: 450px; background: #fff; padding: 50px; border-radius: 4px; box-shadow: 0 10px 40px rgba(0,0,0,0.03);">
+        
+        <div style="text-align: center; margin-bottom: 40px;">
+            <h2 style="font-family: 'Playfair Display', serif; font-size: 2rem; margin-bottom: 10px; color: #1a1a1a;">Customer Sign-In</h2>
+            <p style="font-size: 0.85rem; color: #888; letter-spacing: 1px;">JOIN THE WORLD OF RASAYAM</p>
+        </div>
+
+        <form action="{% url 'register' %}" method="POST">
+            {% csrf_token %}
+            
+            <div style="margin-bottom: 25px;">
+                <label style="font-size: 0.7rem; letter-spacing: 1.5px; text-transform: uppercase; color: #666; display: block; margin-bottom: 8px;">Full Name</label>
+                <input type="text" name="username" required 
+                       style="width: 100%; padding: 14px; border: 1px solid #e5e5e5; border-radius: 2px; font-size: 0.9rem; outline: none; transition: 0.3s;"
+                       onfocus="this.style.borderColor='#c5a059'">
+            </div>
+            
+            <div style="margin-bottom: 25px;">
+                <label style="font-size: 0.7rem; letter-spacing: 1.5px; text-transform: uppercase; color: #666; display: block; margin-bottom: 8px;">Phone Number</label>
+                <input type="text" name="phone" placeholder="+91" required 
+                       style="width: 100%; padding: 14px; border: 1px solid #e5e5e5; border-radius: 2px; font-size: 0.9rem; outline: none;"
+                       onfocus="this.style.borderColor='#c5a059'">
+            </div>
+
+            <div style="margin-bottom: 25px;">
+                <label style="font-size: 0.7rem; letter-spacing: 1.5px; text-transform: uppercase; color: #666; display: block; margin-bottom: 8px;">Email Address</label>
+                <input type="email" name="email" placeholder="example@gmail.com" required 
+                       style="width: 100%; padding: 14px; border: 1px solid #e5e5e5; border-radius: 2px; font-size: 0.9rem; outline: none;"
+                       onfocus="this.style.borderColor='#c5a059'">
+            </div>
+
+            <div style="display: flex; gap: 20px; margin-bottom: 35px;">
+                <div style="flex: 1;">
+                    <label style="font-size: 0.7rem; letter-spacing: 1.5px; text-transform: uppercase; color: #666; display: block; margin-bottom: 8px;">Gender</label>
+                    <select name="gender" style="width: 100%; padding: 14px; border: 1px solid #e5e5e5; border-radius: 2px; background: #fff; font-size: 0.9rem; outline: none;">
+                        <option value="F">Female</option>
+                        <option value="M">Male</option>
+                        <option value="O">Other</option>
+                    </select>
+                </div>
+                <div style="flex: 1;">
+                    <label style="font-size: 0.7rem; letter-spacing: 1.5px; text-transform: uppercase; color: #666; display: block; margin-bottom: 8px;">City</label>
+                    <input type="text" name="city" placeholder="e.g. Sambalpur" required 
+                           style="width: 100%; padding: 14px; border: 1px solid #e5e5e5; border-radius: 2px; font-size: 0.9rem; outline: none;"
+                           onfocus="this.style.borderColor='#c5a059'">
+                </div>
+            </div>
+
+            <button type="submit" 
+                    style="width: 100%; padding: 18px; background: #1a1a1a; color: #fff; border: none; font-weight: 600; cursor: pointer; letter-spacing: 3px; font-size: 0.8rem; text-transform: uppercase; transition: 0.3s;"
+                    onmouseover="this.style.background='#333'" 
+                    onmouseout="this.style.background='#1a1a1a'">
+                SEND VERIFICATION CODE
+            </button>
+        </form>
+
+        <p style="text-align: center; margin-top: 25px; font-size: 0.75rem; color: #999;">
+            By signing in, you agree to our <a href="#" style="color: #666; text-decoration: underline;">Terms & Privacy</a>
+        </p>
+    </div>
+</section>
+{% endblock %}

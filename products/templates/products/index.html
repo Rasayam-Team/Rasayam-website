@@ -1,0 +1,95 @@
+{% extends 'products/base.html' %}
+{% load static %}
+
+{% block content %}
+<style>
+    /* 1. THE STATIC HERO (The local image with text) */
+    .static-hero {
+        width: 100%;
+        height: 80vh;
+        /* Path to your local image from your drive */
+        background-image: url('{% static "products/image/hero-bg.png" %}');
+        background-size: cover;
+        background-position: top center;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        color: white;
+    }
+    .hero-text h1 { font-family: 'Playfair Display'; font-size: 4rem; margin-bottom: 10px; }
+    .hero-text p { letter-spacing: 5px; text-transform: uppercase; font-size: 0.9rem; }
+    .btn-shop { 
+        display: inline-block; margin-top: 20px; padding: 12px 35px; 
+        background: white; color: black; text-decoration: none; font-weight: 600; 
+    }
+
+    /* 2. THE SCROLLING BANNERS (Pure images, no text) */
+    .banner-scroller { width: 100%; height: 60vh; padding: 40px 0; background: #fff; }
+    .swiper { width: 90%; height: 100%; border-radius: 4px; }
+    .slide-img { width: 100%; height: 100%; background-size: cover; background-position: center; }
+</style>
+
+<section class="static-hero">
+    <div class="hero-text">
+        <h1>The Heritage Collection</h1>
+        <p>ARTISTRY IN EVERY SILHOUETTE</p>
+        <a href="{% url 'shop' %}" class="btn-shop">SHOP NOW</a>
+    </div>
+</section>
+
+{% if banners %}
+<section class="banner-scroller">
+    <div class="swiper mySwiper">
+        <div class="swiper-wrapper">
+            {% for banner in banners %}
+            <div class="swiper-slide">
+                <div class="slide-img" style="background-image: url('{{ banner.image.url }}');"></div>
+            </div>
+            {% endfor %}
+        </div>
+        <div class="swiper-pagination"></div>
+    </div>
+</section>
+{% endif %}
+
+<section class="category-section container" style="padding: 60px 0;">
+    <h2 style="text-align: center; margin-bottom: 40px; font-family: 'Playfair Display'; font-size: 2.5rem;">Shop By Variety</h2>
+    <div class="category-grid" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px;">
+        {% for cat in categories %}
+        <a href="{% url 'category_detail' cat.slug %}" style="text-decoration: none; color: inherit;">
+            <div class="category-card" style="text-align: center;">
+                <div class="category-img-box" style="overflow: hidden;">
+                    <img src="{{ cat.image.url }}" alt="{{ cat.name }}" style="width: 100%; border-radius: 8px; transition: 0.3s;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
+                </div>
+                <p style="margin-top: 15px; font-weight: 600; text-transform: capitalize;">{{ cat.name }}</p>
+            </div>
+        </a>
+        {% endfor %}
+    </div>
+</section>
+
+<section class="offers-section container" style="padding-bottom: 60px;">
+    <h3>Exclusive Offers</h3>
+    <div class="offers-grid">
+        {% for promo in promos %}
+        <div class="offer-card" style="background: #fdfaf0; padding: 25px; border: 1px solid #eee;">
+            <h4>{{ promo.title }}</h4>
+            <p>{{ promo.subtitle }}</p>
+            <a href="{{ promo.link_url }}" style="text-decoration: none; color: #5d4037; font-weight: 600;">{{ promo.link_text }} ›</a>
+        </div>
+        {% endfor %}
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  var swiper = new Swiper(".mySwiper", {
+    loop: true,
+    effect: "fade",
+    autoplay: { delay: 4000 },
+    pagination: { el: ".swiper-pagination", clickable: true },
+  });
+</script>
+{% endblock %}

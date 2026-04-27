@@ -1,0 +1,115 @@
+{% extends 'products/base.html' %}
+{% load static %}
+
+{% block content %}
+<header class="text-center" style="padding: 60px 0 30px; background: #fff; border-bottom: 1px solid var(--border);">
+    <h2 class="playfair" style="font-size: 2.8rem; margin: 0;">Your Selection</h2>
+    <p style="font-size: 0.65rem; letter-spacing: 3px; color: var(--gold); margin-top: 10px; text-transform: uppercase; font-weight: 600;">
+        Review Before Checkout
+    </p>
+</header>
+
+<section class="container" style="padding: 20px 0 60px;">
+    <div class="cart-layout" style="display: flex; gap: 40px; align-items: flex-start;">
+        
+        <div class="cart-items-wrapper" style="flex: 2;">
+            {% if cart_items %}
+                {% for item in cart_items %}
+                <div class="cart-item-card" style="display: flex; align-items: center; justify-content: space-between; padding: 25px 0; border-bottom: 1px solid #f0f0f0;">
+                    <div style="display: flex; align-items: center; gap: 25px;">
+                        <div style="width: 100px; height: 130px; overflow: hidden; background: #f9f9f9;">
+                            {% if item.product.image %}
+                                <img src="{{ item.product.image.url }}" alt="{{ item.product.name }}" style="width: 100%; height: 100%; object-fit: cover;">
+                            {% endif %}
+                        </div>
+                        <div>
+                            <h3 class="playfair" style="font-size: 1.2rem; margin-bottom: 5px;">{{ item.product.name }}</h3>
+                            <p style="color: #888; font-size: 0.8rem; margin-bottom: 10px;">Article No: #RAS-{{ item.product.id }}</p>
+                            <p style="color: var(--gold); font-weight: 700;">₹{{ item.product.price|stringformat:"d" }}</p>
+                        </div>
+                    </div>
+
+                    <div style="display: flex; align-items: center; gap: 15px; border: 1px solid #eee; padding: 8px 15px;">
+                        <a href="{% url 'decrease_cart_item' item.id %}" style="text-decoration: none; color: #000; font-weight: bold;">−</a>
+                        <span style="font-size: 0.9rem; min-width: 20px; text-align: center;">{{ item.quantity }}</span>
+                        <a href="{% url 'add_to_cart' item.product.id %}" style="text-decoration: none; color: #000; font-weight: bold;">+</a>
+                    </div>
+
+                    <div style="text-align: right;">
+                        <p style="font-weight: 700; margin-bottom: 5px;">₹{{ item.total_item_price|stringformat:"d" }}</p>
+                        <a href="{% url 'remove_from_cart' item.id %}" style="color: #999; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 1px;">Remove</a>
+                    </div>
+                </div>
+                {% endfor %}
+            {% else %}
+                <div style="text-align: center; padding: 80px 0;">
+                    <p class="playfair" style="font-size: 1.4rem; color: #bbb; margin-bottom: 20px;">Your boutique bag is empty.</p>
+                    <a href="{% url 'shop' %}" class="btn-gold" style="padding: 12px 30px; text-decoration: none; font-size: 0.8rem;">DISCOVER COLLECTION</a>
+                </div>
+            {% endif %}
+        </div>
+
+        {% if cart_items %}
+        <div class="cart-summary" style="flex: 1; background: #fafafa; padding: 40px; border-radius: 2px; position: sticky; top: 100px;">
+            <h3 class="playfair" style="font-size: 1.4rem; margin-bottom: 25px;">Order Summary</h3>
+            
+            <div class="summary-details" style="display: flex; flex-direction: column; gap: 15px; margin-bottom: 25px;">
+                <div style="display: flex; justify-content: space-between;">
+                    <span style="color: #666;">Subtotal</span>
+                    <span>₹{{ total_price|stringformat:"d" }}</span>
+                </div>
+                <div style="display: flex; justify-content: space-between;">
+                    <span style="color: #666;">Boutique Shipping</span>
+                    <span style="color: var(--gold); font-weight: 700; font-size: 0.7rem; letter-spacing: 1px;">COMPLIMENTARY</span>
+                </div>
+            </div>
+            
+            <div style="display: flex; justify-content: space-between; border-top: 1px solid #ddd; padding-top: 20px; margin-top: 20px;">
+                <strong class="playfair" style="font-size: 1.3rem;">Total</strong>
+                <strong style="font-size: 1.3rem; color: var(--gold);">₹{{ total_price|stringformat:"d" }}</strong>
+            </div>
+            
+            <div style="margin-top: 35px; display: flex; flex-direction: column; gap: 12px;">
+                <a href="{% url 'save_order' %}" style="text-decoration: none;">
+                    <button class="btn-gold" style="width: 100%; padding: 18px; font-weight: 700; cursor: pointer;">
+                        PROCEED TO CHECKOUT
+                    </button>
+                </a>
+                <p style="font-size: 0.65rem; color: #aaa; text-align: center; margin-top: 10px;">
+                    Secure transaction powered by Rasayam Encryption
+                </p>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</section>
+
+<section class="container" style="padding: 80px 0; border-top: 1px solid var(--border);">
+    <div class="text-center" style="margin-bottom: 50px;">
+        <span style="font-size: 0.7rem; letter-spacing: 2px; color: var(--gold); text-transform: uppercase;">You May Also Adore</span>
+        <h3 class="playfair" style="font-size: 2.2rem; margin-top: 10px;">Handpicked for Your Taste</h3>
+    </div>
+
+    <div class="product-grid" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 30px;">
+        {% for product in recommended_items %}
+        <div class="product-card">
+            <div class="product-img-wrapper" style="height: 380px; position: relative; overflow: hidden;">
+                {% if product.image %}
+                    <img src="{{ product.image.url }}" alt="{{ product.name }}" style="width: 100%; height: 100%; object-fit: cover;">
+                {% endif %}
+            </div>
+            <div class="product-info" style="padding: 15px 0;">
+                <h4 class="playfair" style="font-size: 1rem;">{{ product.name }}</h4>
+                <p class="price" style="color: var(--gold); font-weight: 700; margin: 8px 0;">₹{{ product.price|stringformat:"d" }}</p>
+                
+                <a href="{% url 'add_to_cart' product.id %}" style="text-decoration: none;">
+                    <button class="btn-outline" style="width: 100%; padding: 10px; border: 1px solid var(--gold); background: none; color: var(--gold); cursor: pointer;">
+                        Add to Selection
+                    </button>
+                </a>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</section>
+{% endblock %}

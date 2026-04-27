@@ -1,0 +1,28 @@
+{% extends 'products/base.html' %}
+
+{% block content %}
+<section style="padding: 150px 0; background: #fff; min-height: 80vh; display: flex; align-items: center;">
+    <div class="container" style="max-width: 400px; text-align: center;">
+        <h2 class="playfair" style="font-size: 2.5rem; margin-bottom: 10px;">Welcome Back</h2>
+        <p style="color: #999; font-size: 0.8rem; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 40px;">
+            Enter your details to continue
+        </p>
+
+        <form method="POST">
+            {% csrf_token %}
+            <div style="margin-bottom: 25px;">
+                <input type="text" name="phone_number" placeholder="Phone Number" required 
+                       style="width: 100%; padding: 15px; border: 1px solid #eee; font-family: inherit; text-align: center;">
+            </div>
+            
+            <button type="submit" class="btn-gold" style="width: 100%; padding: 18px; letter-spacing: 2px;">
+                REQUEST OTP
+            </button>
+        </form>
+
+        <p style="margin-top: 30px; font-size: 0.85rem; color: #666;">
+            New to Rasayam? <a href="{% url 'register' %}" style="color: #c5a059; text-decoration: none; font-weight: 600;">Create an account</a>
+        </p>
+    </div>
+</section>
+{% endblock %}
