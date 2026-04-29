@@ -216,3 +216,8 @@ UNFOLD = {
         ],
     },
 }
+
+
+
+RAZORPAY_KEY_ID = 'rzp_test_SjPurGf3j2o6YC'
+RAZORPAY_KEY_SECRET = '6OKuYuLYp9vsPJo0ie2405n3'

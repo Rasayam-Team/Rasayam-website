@@ -1,0 +1,76 @@
+{% extends 'products/base.html' %}
+{% load static %}
+
+{% block content %}
+<section class="container text-center" style="padding: 100px 0;">
+    <h2 class="playfair" style="font-size: 2rem;">Securing Your Selection</h2>
+    <p style="color: #888; margin-bottom: 30px;">Please do not refresh the page while we connect to the secure gateway.</p>
+    
+    <button id="rzp-button1" class="btn-gold" style="padding: 20px 60px; font-weight: 700;">
+        PAY ₹{{ order.total_amount }}
+    </button>
+</section>
+
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<script>
+var options = {
+    "key": "{{ razorpay_key_id }}", 
+    "amount": "{{ amount }}", 
+    "currency": "INR",
+    "name": "RASAYAM",
+    "description": "Luxury Ethnic Wear - Order #{{ order.id }}",
+    "image": "{% static 'images/logo.png' %}", 
+    "order_id": "{{ razorpay_order_id }}",
+    
+    // --- ADDED THIS: HANDLES CLOSING THE MODAL ---
+    "modal": {
+        "on_dismiss": function(){
+            window.location.assign("{% url 'payment_fail' %}");
+        }
+    },
+    
+    "handler": function (response){
+        var form = document.createElement('form');
+        form.method = 'POST';
+        form.action = "{% url 'payment_verify' %}";
+
+        var map = {
+            'razorpay_payment_id': response.razorpay_payment_id,
+            'razorpay_order_id': response.razorpay_order_id,
+            'razorpay_signature': response.razorpay_signature,
+            'csrfmiddlewaretoken': '{{ csrf_token }}'
+        };
+
+        for (var key in map) {
+            var input = document.createElement('input');
+            input.type = 'hidden';
+            input.name = key;
+            input.value = map[key];
+            form.appendChild(input);
+        }
+
+        document.body.appendChild(form);
+        form.submit();
+    },
+    "prefill": {
+        "name": "{{ request.user.username }}",
+        "email": "{{ request.user.email }}",
+        "contact": "{{ request.user.customerprofile.phone_number }}"
+    },
+    "theme": {
+        "color": "#D4AF37" 
+    }
+};
+
+var rzp1 = new Razorpay(options);
+
+window.onload = function(){
+    document.getElementById('rzp-button1').click();
+};
+
+document.getElementById('rzp-button1').onclick = function(e){
+    rzp1.open();
+    e.preventDefault();
+}
+</script>
+{% endblock %}

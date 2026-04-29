@@ -1,0 +1,22 @@
+{% extends 'products/base.html' %}
+{% block content %}
+<section class="container text-center" style="padding: 120px 0;">
+    <div style="max-width: 600px; margin: 0 auto; border: 1px solid #eee; padding: 60px;">
+        <div style="font-size: 50px; color: #ff3333; margin-bottom: 20px;">✕</div>
+        <h2 class="playfair" style="font-size: 2.2rem; margin-bottom: 15px;">A Stitch in the System</h2>
+        <p style="color: #666; line-height: 1.6; margin-bottom: 30px;">
+            We couldn't process your payment. This could be due to a bank timeout or a dropped connection. 
+            No funds have been permanently deducted.
+        </p>
+        
+        <div style="display: flex; gap: 15px; justify-content: center;">
+            <a href="{% url 'cart' %}" class="btn-gold" style="padding: 15px 30px; text-decoration: none; background: #1a1a1a; color: #fff;">
+                RETURN TO BAG
+            </a>
+            <a href="{% url 'contact' %}" style="padding: 15px 30px; text-decoration: none; border: 1px solid #eee; color: #666;">
+                TALK TO CONCIERGE
+            </a>
+        </div>
+    </div>
+</section>
+{% endblock %}

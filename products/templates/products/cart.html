@@ -70,13 +70,13 @@
             </div>
             
             <div style="margin-top: 35px; display: flex; flex-direction: column; gap: 12px;">
-                <a href="{% url 'save_order' %}" style="text-decoration: none;">
-                    <button class="btn-gold" style="width: 100%; padding: 18px; font-weight: 700; cursor: pointer;">
-                        PROCEED TO CHECKOUT
+                <a href="{% url 'save_order' %}" id="checkout-link" style="text-decoration: none;">
+                    <button class="btn-gold" id="checkout-btn" style="width: 100%; padding: 18px; font-weight: 700; cursor: pointer; border: none; background: #1a1a1a; color: #fff; letter-spacing: 1px;">
+                        PROCEED TO SECURE PAYMENT
                     </button>
                 </a>
                 <p style="font-size: 0.65rem; color: #aaa; text-align: center; margin-top: 10px;">
-                    Secure transaction powered by Rasayam Encryption
+                    🔒 Secure checkout powered by Razorpay Encryption
                 </p>
             </div>
         </div>
@@ -112,4 +112,16 @@
         {% endfor %}
     </div>
 </section>
+
+<script>
+    const checkoutBtn = document.getElementById('checkout-btn');
+    if (checkoutBtn) {
+        checkoutBtn.addEventListener('click', function() {
+            this.innerText = "CONNECTING TO GATEWAY...";
+            this.style.opacity = "0.7";
+            this.style.pointerEvents = "none";
+        });
+    }
+</script>
+
 {% endblock %}

@@ -1,0 +1,22 @@
+{% extends 'products/base.html' %}
+{% block content %}
+<section class="container text-center" style="padding: 120px 0;">
+    <div style="max-width: 600px; margin: 0 auto; border: 1px solid #eee; padding: 60px; background: #fff;">
+        <div style="font-size: 50px; color: #4BB543; margin-bottom: 20px;">✓</div>
+        <h2 class="playfair" style="font-size: 2.2rem; margin-bottom: 15px;">A Masterpiece Secured</h2>
+        <p style="color: #666; line-height: 1.6; margin-bottom: 30px;">
+            Thank you, {{ request.user.username }}. Your payment for Order <strong>#{{ order.id }}</strong> has been verified. 
+            The Rasayam artisans are now preparing your selection.
+        </p>
+        
+        <div style="background: #fdfaf5; padding: 20px; margin-bottom: 30px; text-align: left;">
+            <p style="font-size: 0.8rem; margin: 5px 0;"><strong>Transaction ID:</strong> {{ order.razorpay_payment_id }}</p>
+            <p style="font-size: 0.8rem; margin: 5px 0;"><strong>Total Amount:</strong> ₹{{ order.total_amount }}</p>
+        </div>
+
+        <a href="{% url 'shop' %}" class="btn-gold" style="padding: 15px 40px; text-decoration: none; font-weight: 700;">
+            CONTINUE EXPLORING
+        </a>
+    </div>
+</section>
+{% endblock %}

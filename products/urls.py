@@ -12,6 +12,7 @@ urlpatterns = [
     # --- Cart Logic ---
     path('cart/', views.cart, name='cart'),
     path('add-to-cart/<int:product_id>/', views.add_to_cart, name='add_to_cart'),
+    path('add-to-cart-ajax/<int:product_id>/', views.add_to_cart_ajax, name='add_to_cart_ajax'), # Moved here for grouping
     path('decrease-item/<int:item_id>/', views.decrease_cart_item, name='decrease_cart_item'),
     path('remove-from-cart/<int:item_id>/', views.remove_from_cart, name='remove_from_cart'),
     
@@ -19,8 +20,12 @@ urlpatterns = [
     path('collection/<slug:slug>/', views.category_detail, name='category_detail'),
     path('product/<int:pk>/', views.product_detail_view, name='product_detail'), 
     
-    # --- Orders ---
+    # --- Orders & Razorpay Payments ---
     path('save-order/', views.save_order, name='save_order'),
+    
+    # --- ADDED THIS LINE: The callback for Razorpay to verify payment signature ---
+    path('payment-verify/', views.payment_verify, name='payment_verify'), 
+    
     path('order/<int:order_id>/', views.order_detail_view, name='order_detail'),
 
     # --- Authentication Flow ---
@@ -31,5 +36,9 @@ urlpatterns = [
     
     # Built-in Logout
     path('logout/', auth_views.LogoutView.as_view(next_page='index'), name='logout'),
-    path('add-to-cart-ajax/<int:product_id>/', views.add_to_cart_ajax, name='add_to_cart_ajax'),
+
+
+    # --- products/urls.py ---
+    path('payment-success/<int:order_id>/', views.payment_success, name='payment_success'),
+    path('payment-fail/', views.payment_fail, name='payment_fail'),
 ]

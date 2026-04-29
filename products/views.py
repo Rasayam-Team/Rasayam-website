@@ -1,16 +1,22 @@
 import json
 import random
+import razorpay
+from django.conf import settings
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import login, logout
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
 from .models import (
     Product, Banner, Category, PromoBox, 
     CustomerProfile, ContactInquiry, Order, OrderItem, Review,
     Cart, CartItem 
 )
+
+# --- Razorpay Client Initialization ---
+razorpay_client = razorpay.Client(auth=(settings.RAZORPAY_KEY_ID, settings.RAZORPAY_KEY_SECRET))
 
 # --- 1. Main Display Views ---
 
@@ -33,24 +39,17 @@ def shop(request):
     categories = Category.objects.all().order_by('order')
     promos = PromoBox.objects.all().order_by('order')[:3]
     
-    # 1. Initialize an empty list for product IDs
     cart_product_ids = []
-    
-    # 2. If the user is logged in, fetch their specific cart items
     if request.user.is_authenticated:
         cart, _ = Cart.objects.get_or_create(user=request.user)
-        # We use .values_list('product_id', flat=True) to get just the IDs 
-        # as a simple list, which is much faster than fetching full objects.
         cart_product_ids = list(cart.items.values_list('product_id', flat=True))
 
     return render(request, 'products/shop.html', {
         'items': items, 
         'categories': categories, 
         'promos': promos,
-        'cart_product_ids': cart_product_ids  # Pass this to the template
+        'cart_product_ids': cart_product_ids
     })
-
-
 
 def about(request):
     reviews = Review.objects.all().order_by('-created_at')
@@ -76,13 +75,9 @@ def contact(request):
 
 @login_required
 def cart(request):
-    # Get or create the cart for the specific logged-in user
     cart, created = Cart.objects.get_or_create(user=request.user)
     cart_items = cart.items.all()
-    
-    # Calculate subtotal using the model property we created
     total_price = sum(item.total_item_price for item in cart_items)
-    
     recommended_items = Product.objects.all().exclude(category__isnull=True).order_by('?')[:4]
     
     context = {
@@ -146,7 +141,7 @@ def login_view(request):
         phone = request.POST.get('phone_number')
         try:
             profile = CustomerProfile.objects.get(phone_number=phone)
-            new_otp = str(random.randint(100000, 999999)) # Standardized to 6 digits
+            new_otp = str(random.randint(100000, 999999))
             profile.otp = new_otp
             profile.save()
             
@@ -180,7 +175,7 @@ def verify_otp(request, phone_number):
 
 def logout_view(request):
     logout(request)
-    request.session.flush() # Clears any lingering guest data
+    request.session.flush()
     return redirect('index')
 
 @login_required
@@ -188,7 +183,103 @@ def profile_view(request):
     orders = request.user.orders.all().order_by('-created_at')
     return render(request, 'products/profile.html', {'orders': orders})
 
-# --- 4. Order & Cart Processing ---
+# --- 4. Order & Cart Processing (with Razorpay) ---
+
+@login_required
+def save_order(request):
+    """ Converts Cart items into a permanent Order and initiates Razorpay """
+    cart = get_object_or_404(Cart, user=request.user)
+    cart_items = cart.items.all()
+
+    if not cart_items:
+        messages.error(request, "Your bag is empty.")
+        return redirect('shop')
+
+    total_amount = sum(item.total_item_price for item in cart_items)
+
+    # 1. Create the Local Order record
+    order = Order.objects.create(
+        user=request.user,
+        total_amount=total_amount,
+        status='Pending'
+    )
+
+    for item in cart_items:
+        OrderItem.objects.create(
+            order=order,
+            product_name=item.product.name,
+            price=item.product.price,
+            quantity=item.quantity,
+            image_url=item.product.image.url if item.product.image else ""
+        )
+
+    # 2. Initiate Razorpay Order
+    amount_in_paise = int(total_amount * 100)
+    payment_data = {
+        "amount": amount_in_paise,
+        "currency": "INR",
+        "receipt": f"rasayam_order_{order.id}",
+    }
+
+    try:
+        razorpay_order = razorpay_client.order.create(data=payment_data)
+        order.razorpay_order_id = razorpay_order['id']
+        order.save()
+
+        # Clear the items from the cart
+        cart_items.delete()
+
+        # Render the payment gateway page
+        return render(request, 'products/payment.html', {
+            'order': order,
+            'razorpay_order_id': razorpay_order['id'],
+            'razorpay_key_id': settings.RAZORPAY_KEY_ID,
+            'amount': amount_in_paise,
+        })
+    except Exception as e:
+        print("!!! RAZORPAY ERROR:", str(e)) 
+        messages.error(request, f"Gateway Error: {str(e)}")
+        return redirect('cart')
+
+@csrf_exempt
+@login_required
+def payment_verify(request):
+    """ Verifies Razorpay Signature and finalizes the transaction """
+    if request.method == "POST":
+        try:
+            payment_id = request.POST.get('razorpay_payment_id')
+            razorpay_order_id = request.POST.get('razorpay_order_id')
+            signature = request.POST.get('razorpay_signature')
+
+            params_dict = {
+                'razorpay_order_id': razorpay_order_id,
+                'razorpay_payment_id': payment_id,
+                'razorpay_signature': signature
+            }
+
+            # Security verification
+            razorpay_client.utility.verify_payment_signature(params_dict)
+
+            # Mark Order as Paid
+            order = Order.objects.get(razorpay_order_id=razorpay_order_id)
+            order.razorpay_payment_id = payment_id
+            order.razorpay_signature = signature
+            order.is_paid = True
+            order.status = 'Paid'
+            order.save()
+
+            messages.success(request, "Payment verified. Your collection is being prepared!")
+            return redirect('order_detail', order_id=order.id)
+
+        except Exception as e:
+            messages.error(request, "Verification failed. If balance was deducted, please contact support.")
+            return redirect('shop')
+    return redirect('shop')
+
+@login_required
+def order_detail_view(request, order_id):
+    order = get_object_or_404(Order, id=order_id, user=request.user)
+    return render(request, 'products/order_detail.html', {'order': order})
 
 @login_required
 def add_to_cart(request, product_id):
@@ -201,8 +292,6 @@ def add_to_cart(request, product_id):
         cart_item.save()
     
     messages.success(request, f"{product.name} added to your Selection.")
-    
-    # Stay on the current page or go to shop to prevent "disappearing" feel
     return redirect(request.META.get('HTTP_REFERER', 'shop'))
 
 @login_required
@@ -223,48 +312,6 @@ def remove_from_cart(request, item_id):
     return redirect('cart')
 
 @login_required
-def save_order(request):
-    """ Converts Cart items into a permanent Order """
-    cart = get_object_or_404(Cart, user=request.user)
-    cart_items = cart.items.all()
-
-    if not cart_items:
-        messages.error(request, "Your bag is empty.")
-        return redirect('shop')
-
-    # Calculate final amount
-    total_amount = sum(item.total_item_price for item in cart_items)
-
-    order = Order.objects.create(
-        user=request.user,
-        total_amount=total_amount,
-        status='Pending'
-    )
-
-    for item in cart_items:
-        OrderItem.objects.create(
-            order=order,
-            product_name=item.product.name,
-            price=item.product.price,
-            quantity=item.quantity,
-            image_url=item.product.image.url if item.product.image else ""
-        )
-
-    # Clear the cart completely
-    cart_items.delete()
-
-    messages.success(request, "Order placed successfully! Review your selection below.")
-    return redirect('order_detail', order_id=order.id)
-
-@login_required
-def order_detail_view(request, order_id):
-    order = get_object_or_404(Order, id=order_id, user=request.user)
-    return render(request, 'products/order_detail.html', {'order': order})
-
-
-from django.http import JsonResponse
-
-@login_required
 def add_to_cart_ajax(request, product_id):
     product = get_object_or_404(Product, id=product_id)
     cart, _ = Cart.objects.get_or_create(user=request.user)
@@ -274,7 +321,6 @@ def add_to_cart_ajax(request, product_id):
         cart_item.quantity += 1
         cart_item.save()
     
-    # Calculate the total count to update the navbar badge
     total_count = sum(item.quantity for item in cart.items.all())
     
     return JsonResponse({
@@ -282,3 +328,53 @@ def add_to_cart_ajax(request, product_id):
         'cart_count': total_count,
         'message': f"{product.name} added to your selection."
     })
+
+
+# --- products/views.py ---
+
+def payment_success(request, order_id):
+    order = get_object_or_404(Order, id=order_id, user=request.user)
+    return render(request, 'products/payment_success.html', {'order': order})
+
+def payment_fail(request):
+    return render(request, 'products/payment_fail.html')
+
+
+@csrf_exempt
+@login_required
+def payment_verify(request):
+    """ Verifies the Razorpay Signature and marks order as Paid """
+    if request.method == "POST":
+        try:
+            # --- 1. CAPTURE DATA FROM POST (Fixes 'razorpay_order_id' error) ---
+            payment_id = request.POST.get('razorpay_payment_id')
+            razorpay_order_id = request.POST.get('razorpay_order_id')
+            signature = request.POST.get('razorpay_signature')
+
+            # --- 2. CREATE THE DICTIONARY (Fixes 'params_dict' error) ---
+            params_dict = {
+                'razorpay_order_id': razorpay_order_id,
+                'razorpay_payment_id': payment_id,
+                'razorpay_signature': signature
+            }
+
+            # 3. Verify the signature
+            razorpay_client.utility.verify_payment_signature(params_dict)
+
+            # 4. Update Order in Database
+            order = Order.objects.get(razorpay_order_id=razorpay_order_id)
+            order.razorpay_payment_id = payment_id
+            order.razorpay_signature = signature
+            order.is_paid = True
+            order.status = 'Paid'
+            order.save()
+
+            # 5. Redirect to your new Success page
+            messages.success(request, "Payment successful!")
+            return redirect('payment_success', order_id=order.id)
+
+        except Exception as e:
+            print("Verification Error:", str(e))
+            return redirect('payment_fail')
+            
+    return redirect('shop')
