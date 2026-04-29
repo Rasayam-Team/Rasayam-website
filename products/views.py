@@ -32,11 +32,25 @@ def shop(request):
     items = Product.objects.all()
     categories = Category.objects.all().order_by('order')
     promos = PromoBox.objects.all().order_by('order')[:3]
+    
+    # 1. Initialize an empty list for product IDs
+    cart_product_ids = []
+    
+    # 2. If the user is logged in, fetch their specific cart items
+    if request.user.is_authenticated:
+        cart, _ = Cart.objects.get_or_create(user=request.user)
+        # We use .values_list('product_id', flat=True) to get just the IDs 
+        # as a simple list, which is much faster than fetching full objects.
+        cart_product_ids = list(cart.items.values_list('product_id', flat=True))
+
     return render(request, 'products/shop.html', {
         'items': items, 
         'categories': categories, 
-        'promos': promos
+        'promos': promos,
+        'cart_product_ids': cart_product_ids  # Pass this to the template
     })
+
+
 
 def about(request):
     reviews = Review.objects.all().order_by('-created_at')
@@ -246,3 +260,25 @@ def save_order(request):
 def order_detail_view(request, order_id):
     order = get_object_or_404(Order, id=order_id, user=request.user)
     return render(request, 'products/order_detail.html', {'order': order})
+
+
+from django.http import JsonResponse
+
+@login_required
+def add_to_cart_ajax(request, product_id):
+    product = get_object_or_404(Product, id=product_id)
+    cart, _ = Cart.objects.get_or_create(user=request.user)
+    cart_item, created = CartItem.objects.get_or_create(cart=cart, product=product)
+    
+    if not created:
+        cart_item.quantity += 1
+        cart_item.save()
+    
+    # Calculate the total count to update the navbar badge
+    total_count = sum(item.quantity for item in cart.items.all())
+    
+    return JsonResponse({
+        'status': 'success',
+        'cart_count': total_count,
+        'message': f"{product.name} added to your selection."
+    })

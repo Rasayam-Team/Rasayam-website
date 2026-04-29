@@ -37,12 +37,21 @@
                     <p style="color: var(--gold); font-weight: 700; font-size: 1.1rem;">₹{{ product.price|stringformat:"d" }}</p>
                     
                     <div class="product-action-container">
-                        <a href="{% url 'add_to_cart' product.id %}" style="text-decoration: none;">
-                            <button class="btn-gold" style="width: 100%; padding: 12px; cursor: pointer;">
+                        {% if product.id in cart_product_ids %}
+                            <a href="{% url 'cart' %}" style="text-decoration: none;">
+                                <button class="btn-gold" style="width: 100%; padding: 15px; background: var(--gold); color: white; border: none; font-size: 0.7rem; letter-spacing: 1px; cursor: pointer;">
+                                    IN SELECTION — VIEW BAG
+                                </button>
+                            </a>
+                        {% else %}
+                            <button id="add-btn-{{ product.id }}" 
+                                    class="btn-gold" 
+                                    onclick="addToCartAsync('{{ product.id }}')"
+                                    style="width: 100%; padding: 15px; background: #1a1a1a; color: white; cursor: pointer; border: none; font-size: 0.7rem; letter-spacing: 2px;">
                                 ADD TO SELECTION
                             </button>
-                        </a>
-                    </div>
+                        {% endif %}
+                    </div>                   
                 </div>
             </div>
             {% empty %}
@@ -70,11 +79,9 @@
             <div style="height: 1px; background: #f0f0f0; margin-bottom: 25px;"></div>
             <p id="qv-desc" style="color: #666; margin-bottom: 35px; line-height: 1.8; font-size: 0.95rem;"></p>
             
-            <a id="qv-add-link" href="#">
-                <button class="btn-gold" style="width: 100%; padding: 18px; font-weight: 700; cursor: pointer;">
-                    ADD TO SELECTION
-                </button>
-            </a>
+            <button id="qv-add-btn" class="btn-gold" style="width: 100%; padding: 18px; font-weight: 700; cursor: pointer; background: #1a1a1a; color: white; border: none; letter-spacing: 2px;">
+                ADD TO SELECTION
+            </button>
             
             <p style="margin-top: 35px; font-size: 0.75rem; color: #aaa; font-style: italic; border-top: 1px solid #f9f9f9; padding-top: 20px;">
                 ✨ Complimentary boutique packaging & shipping included.
@@ -84,15 +91,30 @@
 </div>
 
 <script>
+    // Global list of IDs currently in cart (passed from Django)
+    const cartProductIds = {{ cart_product_ids|safe }};
+
     function openQuickView(id, name, price, desc, img) {
         document.getElementById('qv-name').innerText = name;
         document.getElementById('qv-price').innerText = '₹' + price.toLocaleString('en-IN');
         document.getElementById('qv-desc').innerText = desc;
         document.getElementById('qv-img').src = img;
         
-        // Dynamically update the link for the Add to Cart button in the modal
-        const addLink = document.getElementById('qv-add-link');
-        addLink.href = `/add-to-cart/${id}/`; // Ensure this matches your urls.py path
+        const qvBtn = document.getElementById('qv-add-btn');
+        
+        // Check if item is already in selection
+        if (cartProductIds.includes(parseInt(id))) {
+            qvBtn.innerText = "IN SELECTION";
+            qvBtn.style.background = "#D4AF37"; // Gold
+            qvBtn.disabled = true;
+            qvBtn.onclick = null;
+        } else {
+            qvBtn.innerText = "ADD TO SELECTION";
+            qvBtn.style.background = "#1a1a1a";
+            qvBtn.disabled = false;
+            // Link the modal button to our async function
+            qvBtn.onclick = function() { addToCartAsync(id, true); };
+        }
         
         document.getElementById('quickview-modal').style.display = 'flex';
     }
@@ -104,6 +126,52 @@
     window.onclick = function(event) {
         let modal = document.getElementById('quickview-modal');
         if (event.target == modal) closeQuickView();
+    }
+
+    function addToCartAsync(productId, isFromModal = false) {
+        // Find the right button to update
+        const gridBtn = document.getElementById(`add-btn-${productId}`);
+        const modalBtn = document.getElementById('qv-add-btn');
+        
+        const targetBtn = isFromModal ? modalBtn : gridBtn;
+        const originalText = targetBtn.innerText;
+        
+        targetBtn.innerText = "ADDING...";
+        targetBtn.style.opacity = "0.7";
+
+        fetch(`/add-to-cart-ajax/${productId}/`, {
+            method: 'GET',
+            headers: { 'X-Requested-With': 'XMLHttpRequest' }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'success') {
+                // 1. Update Navbar Badge
+                const badge = document.getElementById('cart-count');
+                if(badge) badge.innerText = data.cart_count;
+
+                // 2. Update UI State for both buttons if they exist
+                const updateButton = (btn) => {
+                    if(!btn) return;
+                    btn.innerText = "IN SELECTION";
+                    btn.style.background = "#D4AF37"; // Rasayam Gold
+                    btn.style.opacity = "1";
+                    btn.disabled = true;
+                    btn.onclick = null;
+                };
+
+                updateButton(gridBtn);
+                updateButton(modalBtn);
+
+                // 3. Update the local JS list so Quick View stays synced
+                cartProductIds.push(parseInt(productId));
+            }
+        })
+        .catch(error => {
+            targetBtn.innerText = originalText;
+            targetBtn.style.opacity = "1";
+            console.error('Error:', error);
+        });
     }
 </script>
 {% endblock %}

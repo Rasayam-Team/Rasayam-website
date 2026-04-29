@@ -31,4 +31,5 @@ urlpatterns = [
     
     # Built-in Logout
     path('logout/', auth_views.LogoutView.as_view(next_page='index'), name='logout'),
+    path('add-to-cart-ajax/<int:product_id>/', views.add_to_cart_ajax, name='add_to_cart_ajax'),
 ]
