@@ -1,0 +1,45 @@
+{% extends 'products/base.html' %}
+{% load static %}
+
+{% block content %}
+<style>
+    .policy-page-container { background-color: #fff; color: var(--royal); padding-bottom: 80px; }
+    .policy-content { max-width: 800px; margin: 0 auto; padding: 50px; background: #fcfcfc; border: 1px solid var(--border); box-shadow: 0 15px 40px rgba(0,0,0,0.02); }
+    .policy-section { margin-bottom: 40px; }
+    .policy-section h3 { font-family: 'Playfair Display', serif; font-size: 1.5rem; color: var(--royal); margin-bottom: 15px; border-bottom: 1px solid var(--gold); padding-bottom: 10px; display: inline-block; }
+    .policy-section p { font-family: 'Poppins', sans-serif; color: #555; line-height: 1.8; font-size: 0.95rem; }
+</style>
+
+<div class="policy-page-container">
+    <header class="text-center" style="padding: 60px 0 40px;">
+        <div class="container">
+            <h2 class="playfair" style="font-size: 3rem; margin-bottom: 10px;">Terms of Use</h2>
+            <p style="letter-spacing: 2px; font-size: 0.75rem; text-transform: uppercase; color: #999;">The legal framework of our boutique</p>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="policy-content">
+            <div class="policy-section">
+                <h3>Agreement to Terms</h3>
+                <p>By accessing the RASAYAM digital atelier, you agree to be bound by these Terms of Use. If you do not agree, please refrain from using our services.</p>
+            </div>
+
+            <div class="policy-section">
+                <h3>Intellectual Property</h3>
+                <p>All content, including ethnic wear designs, kurti patterns, brand imagery, and text, is the exclusive property of RASAYAM and is protected by Indian copyright laws.</p>
+            </div>
+
+            <div class="policy-section">
+                <h3>Product Accuracy</h3>
+                <p>While we strive for color accuracy in our product photography, slight variations may occur due to screen settings and the handcrafted nature of our premium fabrics.</p>
+            </div>
+
+            <div class="policy-section">
+                <h3>Governing Law</h3>
+                <p>These terms shall be governed by and construed in accordance with the laws of India. Any disputes arising shall be subject to the exclusive jurisdiction of the courts in [Your City].</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

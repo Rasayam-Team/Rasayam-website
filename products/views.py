@@ -378,3 +378,15 @@ def payment_verify(request):
             return redirect('payment_fail')
             
     return redirect('shop')
+
+def privacy(request):
+    return render(request, 'products/privacy.html')
+
+def refund(request):
+    return render(request, 'products/refund.html')
+
+def shipping(request):
+    return render(request, 'products/shipping.html')
+
+def terms(request):
+    return render(request, 'products/terms.html')

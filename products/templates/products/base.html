@@ -138,9 +138,10 @@
         <div class="footer-col">
             <h4>Our Policies</h4>
             <ul>
-                <li><a href="#">Terms of Use</a></li>
-                <li><a href="#">Privacy Policy</a></li>
-                <li><a href="#">Exchange & Returns</a></li>
+                <li><a href="{% url 'terms' %}">Terms of Use</a></li>
+                <li><a href="{% url 'privacy' %}">Privacy Policy</a></li>
+                <li><a href="{% url 'refund' %}">Exchange & Returns</a></li>
+                <li><a href="{% url 'shipping' %}">Shipping Policy</a></li>
             </ul>
             <div class="payment-methods">
                 <p><strong>Pay Securely By</strong></p>
