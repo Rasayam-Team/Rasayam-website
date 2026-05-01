@@ -415,3 +415,30 @@ body {
 }
 
 .btn-gold:hover { background: var(--gold); }
+
+
+/* Standard Desktop View */
+.product-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr); /* 4 items per row */
+    gap: 20px;
+}
+
+/* Mobile View (Screens smaller than 768px) */
+@media (max-width: 768px) {
+    .product-grid {
+        grid-template-columns: repeat(2, 1fr); /* 2 items per row on phones */
+        gap: 10px;
+    }
+    
+    .hero-section {
+        padding: 20px;
+        text-align: center;
+    }
+}
+
+img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+}
