@@ -442,3 +442,42 @@ img {
     height: auto;
     display: block;
 }
+
+/* Mobile Styles (Under 768px) */
+@media (max-width: 768px) {
+    .nav-links {
+        display: none; /* Hide links by default on mobile */
+        flex-direction: column;
+        position: absolute;
+        top: 60px;
+        left: 0;
+        width: 100%;
+        background: white;
+        text-align: center;
+        box-shadow: 0 5px 10px rgba(0,0,0,0.1);
+    }
+
+    /* Show links when the hidden checkbox is checked */
+    .menu-toggle:checked ~ .nav-links {
+        display: flex;
+    }
+
+    .hamburger {
+        display: block; /* Show the 3 bars icon */
+        cursor: pointer;
+    }
+
+    /* Scale down that big Hero Text */
+    .hero-section h1 {
+        font-size: 2.5rem; /* Shorter font so it doesn't overwhelm the image */
+        line-height: 1.2;
+    }
+
+    .hero-section p {
+        font-size: 0.9rem;
+        letter-spacing: 2px;
+    }
+}
+
+/* Hide the toggle and hamburger on Desktop */
+.menu-toggle, .hamburger { display: none; }
