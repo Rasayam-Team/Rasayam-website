@@ -57,14 +57,21 @@
     <h2 style="text-align: center; margin-bottom: 40px; font-family: 'Playfair Display'; font-size: 2.5rem;">Shop By Variety</h2>
     <div class="category-grid" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px;">
         {% for cat in categories %}
-        <a href="{% url 'category_detail' cat.slug %}" style="text-decoration: none; color: inherit;">
-            <div class="category-card" style="text-align: center;">
-                <div class="category-img-box" style="overflow: hidden;">
-                    <img src="{{ cat.image.url }}" alt="{{ cat.name }}" style="width: 100%; border-radius: 8px; transition: 0.3s;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
+            <a href="{% url 'category_detail' cat.slug %}" style="text-decoration: none; color: inherit;">
+                <div class="category-card" style="text-align: center;">
+                    <div class="category-img-box" style="overflow: hidden; background: #f9f9f9; border-radius: 8px;">
+                        {% if cat.image %}
+                            <img src="{{ cat.image.url }}" alt="{{ cat.name }}" style="width: 100%; border-radius: 8px; transition: 0.3s;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
+                        {% else %}
+                            <!-- Fallback: A simple box with the first letter if no image is uploaded -->
+                            <div style="width: 100%; aspect-ratio: 1/1; display: flex; align-items: center; justify-content: center; background: #eee; color: #999;">
+                                <span>No Image</span>
+                            </div>
+                        {% endif %}
+                    </div>
+                    <p style="margin-top: 15px; font-weight: 600; text-transform: capitalize;">{{ cat.name }}</p>
                 </div>
-                <p style="margin-top: 15px; font-weight: 600; text-transform: capitalize;">{{ cat.name }}</p>
-            </div>
-        </a>
+            </a>
         {% endfor %}
     </div>
 </section>
