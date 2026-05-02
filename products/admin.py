@@ -6,22 +6,49 @@ from import_export.admin import ImportExportModelAdmin
 from unfold.contrib.import_export.forms import ExportForm, ImportForm
 from .models import (
     CustomerProfile, Product, Banner, Category, 
-    Order, OrderItem, Review, PromoBox, ContactInquiry
+    Order, OrderItem, Review, PromoBox, ContactInquiry,
+    Size, ProductImage  # Added these
 )
 
-# --- 1. Product Management with Import/Export ---
+# --- 1. Product Inlines & Size Management ---
+
+class ProductImageInline(TabularInline):
+    """Allows uploading multiple gallery images directly on the Product page"""
+    model = ProductImage
+    extra = 3  # Provides 3 empty slots for side, back, and close-up views
+    tab = True # Unfold specific: puts inlines in a nice tab
+
+@admin.register(Size)
+class SizeAdmin(ModelAdmin):
+    list_display = ('name',)
+    search_fields = ('name',)
+
+# --- 2. Product Management with Gallery & Sizes ---
 
 @admin.register(Product)
 class ProductAdmin(ModelAdmin, ImportExportModelAdmin):
     import_form_class = ImportForm
     export_form_class = ExportForm
 
-    list_display = ('name', 'price', 'seller_tag', 'category')
-    list_filter = ('category', 'seller_tag')
+    list_display = ('display_thumbnail', 'name', 'price', 'category', 'seller_tag')
+    list_filter = ('category', 'seller_tag', 'sizes')
     search_fields = ('name', 'description')
+    
+    # Enables a nice side-by-side selection for sizes
+    filter_horizontal = ('sizes',)
+    
+    # Adds the image gallery uploader
+    inlines = [ProductImageInline]
+    
     fixed_submit_bar = True
 
-# --- 2. Branding & Content ---
+    def display_thumbnail(self, obj):
+        if obj.image:
+            return format_html('<img src="{}" style="width: 50px; height: 50px; object-fit: cover; border-radius: 4px;" />', obj.image.url)
+        return "No Image"
+    display_thumbnail.short_description = "Main View"
+
+# --- 3. Branding & Content ---
 
 @admin.register(Banner)
 class BannerAdmin(ModelAdmin):
@@ -35,10 +62,7 @@ class BannerAdmin(ModelAdmin):
 
 @admin.register(PromoBox)
 class PromoBoxAdmin(ModelAdmin):
-    # Added 'link_text' and 'link_url' so you can see them in the table
     list_display = ('title', 'subtitle', 'link_text', 'link_url', 'order')
-    
-    # This lets you update the order and links directly from the list page!
     list_editable = ('order', 'link_text', 'link_url')
 
 @admin.register(Category)
@@ -46,7 +70,7 @@ class CategoryAdmin(ModelAdmin):
     list_display = ('name', 'order')
     search_fields = ('name',)
 
-# --- 3. User & Interaction ---
+# --- 4. User & Interaction ---
 
 @admin.register(CustomerProfile)
 class CustomerProfileAdmin(ModelAdmin):
@@ -65,7 +89,7 @@ class ReviewAdmin(ModelAdmin):
     list_display = ('user', 'product', 'rating', 'created_at')
     list_filter = ('rating', 'created_at')
 
-# --- 4. Orders: The Heart of the Business (MERGED) ---
+# --- 5. Orders & Payments ---
 
 class OrderItemInline(TabularInline):
     model = OrderItem
@@ -74,16 +98,11 @@ class OrderItemInline(TabularInline):
 
 @admin.register(Order)
 class OrderAdmin(ModelAdmin):
-    # Combined display to show payment status and total at a glance
     list_display = ('id', 'user', 'total_amount', 'is_paid', 'status', 'created_at')
-    
-    # Combined filters for better accounting
     list_filter = ('is_paid', 'status', 'created_at')
     
-    # Razorpay fields are locked to prevent accidental manual changes
+    # Razorpay fields are locked to maintain transaction integrity
     readonly_fields = ('razorpay_order_id', 'razorpay_payment_id', 'razorpay_signature')
     
-    # Includes the list of items inside the order view
     inlines = [OrderItemInline]
-    
     fixed_submit_bar = True

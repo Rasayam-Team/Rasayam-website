@@ -1,0 +1,72 @@
+{% extends 'base.html' %} <!-- Assuming you have a base.html -->
+
+{% block content %}
+<div class="product-container" style="display: flex; max-width: 1200px; margin: 40px auto; gap: 40px; font-family: sans-serif;">
+
+    <!-- LEFT SIDE: Image Gallery -->
+    <div class="gallery" style="display: flex; gap: 20px; width: 50%;">
+        
+        <!-- Thumbnails -->
+        <div class="thumbnails" style="display: flex; flex-direction: column; gap: 10px;">
+            {% for img in product.gallery_images.all %}
+                <img src="{{ img.image.url }}" 
+                     style="width: 60px; height: 80px; object-fit: cover; cursor: pointer; border: 1px solid #ccc; border-radius: 4px;"
+                     onclick="changeMainImage('{{ img.image.url }}')"
+                     onmouseover="this.style.borderColor='#A855F7'"
+                     onmouseout="this.style.borderColor='#ccc'">
+            {% endfor %}
+        </div>
+
+        <!-- Main Big Image -->
+        <div class="main-image-box" style="flex-grow: 1;">
+            {% if product.gallery_images.first %}
+                <img id="mainImage" src="{{ product.gallery_images.first.image.url }}" style="width: 100%; border-radius: 8px;">
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- RIGHT SIDE: Product Info -->
+    <div class="product-info" style="width: 50%;">
+        <h1 style="font-size: 28px; margin-bottom: 10px;">{{ product.name }}</h1>
+        <p style="font-size: 24px; color: #B12704; margin-bottom: 20px;">₹{{ product.price }}</p>
+
+        <!-- Sizes Selection -->
+        <div class="sizes" style="margin-bottom: 25px;">
+            <p style="font-weight: bold; margin-bottom: 10px;">Select Size:</p>
+            <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                {% for size in product.sizes.all %}
+                    <button style="padding: 10px 15px; border: 1px solid #ccc; background: white; border-radius: 4px; cursor: pointer; transition: 0.2s;"
+                            onfocus="this.style.borderColor='#A855F7'; this.style.backgroundColor='#F3E8FF'">
+                        {{ size.name }}
+                    </button>
+                {% empty %}
+                    <p>One Size Fits All</p>
+                {% endfor %}
+            </div>
+            <a href="#" style="color: #007185; font-size: 14px; text-decoration: none; display: block; margin-top: 8px;">Size Chart ✓</a>
+        </div>
+
+        <!-- Add to Cart Buttons -->
+        <div style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 30px;">
+            <button style="background-color: #FFD814; border: none; padding: 15px; border-radius: 50px; cursor: pointer; font-weight: bold;">Add to cart</button>
+            <button style="background-color: #FFA41C; border: none; padding: 15px; border-radius: 50px; cursor: pointer; font-weight: bold;">Buy Now</button>
+        </div>
+
+        <!-- Product Details -->
+        <div class="details" style="border-top: 1px solid #ddd; padding-top: 20px;">
+            <h3 style="margin-bottom: 10px;">Product details</h3>
+            <p style="color: #333; line-height: 1.6; margin-bottom: 20px;">{{ product.description }}</p>
+
+            <h3 style="margin-bottom: 10px;">Top highlights</h3>
+            <p style="white-space: pre-line; color: #333; line-height: 1.6;">{{ product.highlights }}</p>
+        </div>
+    </div>
+</div>
+
+<!-- Simple JavaScript for Image Swap -->
+<script>
+    function changeMainImage(newSrc) {
+        document.getElementById('mainImage').src = newSrc;
+    }
+</script>
+{% endblock %}

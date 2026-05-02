@@ -30,9 +30,7 @@ class Banner(models.Model):
 class PromoBox(models.Model):
     title = models.CharField(max_length=100)
     subtitle = models.CharField(max_length=200, blank=True)
-    # The URL destination (e.g., /shop/ or /collection/festive/)
     link_url = models.CharField(max_length=500, blank=True, null=True)
-    # The text on the button (e.g., "Shop Now" or "Explore")
     link_text = models.CharField(max_length=50, default="Shop Now")
     order = models.IntegerField(default=0)
 
@@ -42,7 +40,9 @@ class PromoBox(models.Model):
 
     def __str__(self):
         return self.title
+
 # --- 2. Catalog ---
+
 class Category(models.Model):
     name = models.CharField(max_length=100)
     slug = models.SlugField(unique=True, blank=True, null=True)
@@ -55,19 +55,43 @@ class Category(models.Model):
     def __str__(self):
         return self.name
 
+class Size(models.Model):
+    """Allows admin to create sizes like XS, S, M, L, XL, 5XL etc."""
+    name = models.CharField(max_length=10, unique=True)
+    
+    def __str__(self):
+        return self.name
+
 class Product(models.Model):
     category = models.ForeignKey(Category, on_delete=models.SET_NULL, null=True, blank=True, related_name='products')
     name = models.CharField(max_length=255)
     price = models.DecimalField(max_digits=10, decimal_places=2)
+    # This acts as the "Main" thumbnail image
     image = models.ImageField(upload_to='product_images/', blank=True, null=True)
-    description = models.TextField(blank=True)
-    seller_tag = models.CharField(max_length=50, blank=True)
+    
+    # Detailed Info for the Dedicated Product Page
+    description = models.TextField(blank=True, help_text="Detailed story or description of the product.")
+    highlights = models.TextField(blank=True, help_text="Amazon-style bullet points. Enter each highlight on a new line.")
     fabric_details = models.TextField(blank=True)
+    seller_tag = models.CharField(max_length=50, blank=True)
+    
+    # Size selection
+    sizes = models.ManyToManyField(Size, blank=True, help_text="Hold Ctrl to select multiple sizes.")
 
     def __str__(self):
         return self.name
 
+class ProductImage(models.Model):
+    """Allows for multiple gallery images for a single product."""
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='gallery_images')
+    image = models.ImageField(upload_to='product_gallery/')
+    alt_text = models.CharField(max_length=255, blank=True, help_text="Optional: Describes image for SEO.")
+
+    def __str__(self):
+        return f"Gallery Image for {self.product.name}"
+
 # --- 3. Interaction & Orders ---
+
 class ContactInquiry(models.Model):
     full_name = models.CharField(max_length=200)
     email = models.EmailField()
@@ -92,12 +116,11 @@ class Order(models.Model):
     status = models.CharField(max_length=20, default='Pending')
     total_amount = models.DecimalField(max_digits=10, decimal_places=2)
 
-    # --- RAZORPAY PAYMENT FIELDS (NEW) ---
+    # --- RAZORPAY PAYMENT FIELDS ---
     razorpay_order_id = models.CharField(max_length=100, blank=True, null=True)
     razorpay_payment_id = models.CharField(max_length=100, blank=True, null=True)
     razorpay_signature = models.CharField(max_length=255, blank=True, null=True)
     is_paid = models.BooleanField(default=False)
-    # -------------------------------------
 
     def __str__(self):
         return f"Order {self.id} by {self.user.username}"
@@ -110,6 +133,7 @@ class OrderItem(models.Model):
     image_url = models.URLField(blank=True)
 
 # --- 4. Cart Logic ---
+
 class Cart(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='cart')
     created_at = models.DateTimeField(auto_now_add=True)

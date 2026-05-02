@@ -9,10 +9,11 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
+from django.utils import timezone
 from .models import (
     Product, Banner, Category, PromoBox, 
     CustomerProfile, ContactInquiry, Order, OrderItem, Review,
-    Cart, CartItem 
+    Cart, CartItem, Size, ProductImage
 )
 
 # --- Razorpay Client Initialization ---
@@ -24,7 +25,7 @@ def index(request):
     banners = Banner.objects.filter(active=True).order_by('order')
     categories = Category.objects.all().order_by('order')
     promos = PromoBox.objects.all().order_by('order')[:3]
-    items = Product.objects.all()
+    items = Product.objects.all().prefetch_related('gallery_images')
     
     context = {
         'items': items,
@@ -35,7 +36,7 @@ def index(request):
     return render(request, 'products/index.html', context)
 
 def shop(request):
-    items = Product.objects.all()
+    items = Product.objects.all().prefetch_related('gallery_images')
     categories = Category.objects.all().order_by('order')
     promos = PromoBox.objects.all().order_by('order')[:3]
     
@@ -91,18 +92,24 @@ def cart(request):
 
 def category_detail(request, slug):
     category = get_object_or_404(Category, slug=slug)
-    products = Product.objects.filter(category=category)
+    products = Product.objects.filter(category=category).prefetch_related('gallery_images')
     return render(request, 'products/category_detail.html', {
         'category': category,
         'products': products
     })
 
 def product_detail_view(request, pk):
-    product = get_object_or_404(Product, pk=pk)
+    """Product Detail with Gallery and Sizes"""
+    product = get_object_or_404(Product.objects.prefetch_related('gallery_images', 'sizes'), pk=pk)
     reviews = product.reviews.all().order_by('-created_at')
+    
+    # Process highlights for list display
+    highlights_list = product.highlights.split('\n') if product.highlights else []
+
     return render(request, 'products/product_detail.html', {
         'product': product,
-        'reviews': reviews
+        'reviews': reviews,
+        'highlights_list': highlights_list
     })
 
 # --- 3. Authentication Views ---
@@ -129,9 +136,12 @@ def register_view(request):
         
         generated_otp = str(random.randint(100000, 999999))
         profile.otp = generated_otp
+        profile.otp_created_at = timezone.now()
         profile.save()
         
-        print(f"--- OTP FOR {username}: {generated_otp} ---")
+        # DEBUG MODE: Check your terminal for the code
+        print(f"--- OTP FOR {username} ({phone}): {generated_otp} ---")
+        
         return redirect('verify_otp', phone_number=phone)
         
     return render(request, 'products/register.html')
@@ -143,9 +153,12 @@ def login_view(request):
             profile = CustomerProfile.objects.get(phone_number=phone)
             new_otp = str(random.randint(100000, 999999))
             profile.otp = new_otp
+            profile.otp_created_at = timezone.now()
             profile.save()
             
+            # DEBUG MODE: Check your terminal for the code
             print(f"DEBUG: OTP for {phone} is {new_otp}")
+            
             return redirect('verify_otp', phone_number=phone)
             
         except CustomerProfile.DoesNotExist:
@@ -168,7 +181,7 @@ def verify_otp(request, phone_number):
             messages.success(request, f"Welcome back, {profile.user.username}!")
             return redirect('index')
         else:
-            messages.error(request, "Incorrect OTP. Please check your terminal.")
+            messages.error(request, "Incorrect OTP. Check your server logs.")
             return render(request, 'products/verify_otp.html', {'phone': phone_number})
 
     return render(request, 'products/verify_otp.html', {'phone': phone_number})
@@ -187,7 +200,6 @@ def profile_view(request):
 
 @login_required
 def save_order(request):
-    """ Converts Cart items into a permanent Order and initiates Razorpay """
     cart = get_object_or_404(Cart, user=request.user)
     cart_items = cart.items.all()
 
@@ -197,7 +209,6 @@ def save_order(request):
 
     total_amount = sum(item.total_item_price for item in cart_items)
 
-    # 1. Create the Local Order record
     order = Order.objects.create(
         user=request.user,
         total_amount=total_amount,
@@ -213,7 +224,6 @@ def save_order(request):
             image_url=item.product.image.url if item.product.image else ""
         )
 
-    # 2. Initiate Razorpay Order
     amount_in_paise = int(total_amount * 100)
     payment_data = {
         "amount": amount_in_paise,
@@ -226,10 +236,8 @@ def save_order(request):
         order.razorpay_order_id = razorpay_order['id']
         order.save()
 
-        # Clear the items from the cart
         cart_items.delete()
 
-        # Render the payment gateway page
         return render(request, 'products/payment.html', {
             'order': order,
             'razorpay_order_id': razorpay_order['id'],
@@ -237,14 +245,13 @@ def save_order(request):
             'amount': amount_in_paise,
         })
     except Exception as e:
-        print("!!! RAZORPAY ERROR:", str(e)) 
         messages.error(request, f"Gateway Error: {str(e)}")
         return redirect('cart')
 
 @csrf_exempt
 @login_required
 def payment_verify(request):
-    """ Verifies Razorpay Signature and finalizes the transaction """
+    """Verifies Razorpay Signature and finalizes transaction"""
     if request.method == "POST":
         try:
             payment_id = request.POST.get('razorpay_payment_id')
@@ -257,10 +264,8 @@ def payment_verify(request):
                 'razorpay_signature': signature
             }
 
-            # Security verification
             razorpay_client.utility.verify_payment_signature(params_dict)
 
-            # Mark Order as Paid
             order = Order.objects.get(razorpay_order_id=razorpay_order_id)
             order.razorpay_payment_id = payment_id
             order.razorpay_signature = signature
@@ -268,12 +273,12 @@ def payment_verify(request):
             order.status = 'Paid'
             order.save()
 
-            messages.success(request, "Payment verified. Your collection is being prepared!")
-            return redirect('order_detail', order_id=order.id)
+            messages.success(request, "Payment verified!")
+            return redirect('payment_success', order_id=order.id)
 
         except Exception as e:
-            messages.error(request, "Verification failed. If balance was deducted, please contact support.")
-            return redirect('shop')
+            print("Verification Error:", str(e))
+            return redirect('payment_fail')
     return redirect('shop')
 
 @login_required
@@ -291,7 +296,7 @@ def add_to_cart(request, product_id):
         cart_item.quantity += 1
         cart_item.save()
     
-    messages.success(request, f"{product.name} added to your Selection.")
+    messages.success(request, f"{product.name} added to Selection.")
     return redirect(request.META.get('HTTP_REFERER', 'shop'))
 
 @login_required
@@ -308,7 +313,7 @@ def decrease_cart_item(request, item_id):
 def remove_from_cart(request, item_id):
     cart_item = get_object_or_404(CartItem, id=item_id, cart__user=request.user)
     cart_item.delete()
-    messages.info(request, "Item removed from your bag.")
+    messages.info(request, "Item removed.")
     return redirect('cart')
 
 @login_required
@@ -326,11 +331,8 @@ def add_to_cart_ajax(request, product_id):
     return JsonResponse({
         'status': 'success',
         'cart_count': total_count,
-        'message': f"{product.name} added to your selection."
+        'message': f"{product.name} added."
     })
-
-
-# --- products/views.py ---
 
 def payment_success(request, order_id):
     order = get_object_or_404(Order, id=order_id, user=request.user)
@@ -339,54 +341,8 @@ def payment_success(request, order_id):
 def payment_fail(request):
     return render(request, 'products/payment_fail.html')
 
-
-@csrf_exempt
-@login_required
-def payment_verify(request):
-    """ Verifies the Razorpay Signature and marks order as Paid """
-    if request.method == "POST":
-        try:
-            # --- 1. CAPTURE DATA FROM POST (Fixes 'razorpay_order_id' error) ---
-            payment_id = request.POST.get('razorpay_payment_id')
-            razorpay_order_id = request.POST.get('razorpay_order_id')
-            signature = request.POST.get('razorpay_signature')
-
-            # --- 2. CREATE THE DICTIONARY (Fixes 'params_dict' error) ---
-            params_dict = {
-                'razorpay_order_id': razorpay_order_id,
-                'razorpay_payment_id': payment_id,
-                'razorpay_signature': signature
-            }
-
-            # 3. Verify the signature
-            razorpay_client.utility.verify_payment_signature(params_dict)
-
-            # 4. Update Order in Database
-            order = Order.objects.get(razorpay_order_id=razorpay_order_id)
-            order.razorpay_payment_id = payment_id
-            order.razorpay_signature = signature
-            order.is_paid = True
-            order.status = 'Paid'
-            order.save()
-
-            # 5. Redirect to your new Success page
-            messages.success(request, "Payment successful!")
-            return redirect('payment_success', order_id=order.id)
-
-        except Exception as e:
-            print("Verification Error:", str(e))
-            return redirect('payment_fail')
-            
-    return redirect('shop')
-
-def privacy(request):
-    return render(request, 'products/privacy.html')
-
-def refund(request):
-    return render(request, 'products/refund.html')
-
-def shipping(request):
-    return render(request, 'products/shipping.html')
-
-def terms(request):
-    return render(request, 'products/terms.html')
+# --- Policy Pages ---
+def privacy(request): return render(request, 'products/privacy.html')
+def refund(request): return render(request, 'products/refund.html')
+def shipping(request): return render(request, 'products/shipping.html')
+def terms(request): return render(request, 'products/terms.html')
