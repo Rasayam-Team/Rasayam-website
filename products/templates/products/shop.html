@@ -18,18 +18,21 @@
         <div class="product-grid">
             {% for product in items %}
             <div class="product-card">
+                <!-- Image Wrapper now links to the Dedicated Page -->
                 <div class="product-img-wrapper" style="position: relative; height: 420px; overflow: hidden; background: #f9f9f9;">
-                    {% if product.image %}
-                        <img src="{{ product.image.url }}" alt="{{ product.name }}" style="width: 100%; height: 100%; object-fit: cover; transition: 0.6s ease;">
-                    {% else %}
-                        <img src="https://via.placeholder.com/300x400" alt="No Image">
-                    {% endif %}
+                    <a href="{% url 'product_detail' product.id %}" target="_blank" style="display: block; height: 100%;">
+                        {% if product.image %}
+                            <img src="{{ product.image.url }}" alt="{{ product.name }}" style="width: 100%; height: 100%; object-fit: cover; transition: 0.6s ease;">
+                        {% else %}
+                            <img src="https://via.placeholder.com/300x400" alt="No Image">
+                        {% endif %}
+                    </a>
                     
-                    <button class="btn-gold quick-view-trigger" 
-                            style="position: absolute; bottom: 0; left: 0; width: 100%; padding: 15px; font-size: 0.7rem; opacity: 0.95; cursor: pointer;"
-                            onclick="openQuickView('{{ product.id }}', '{{ product.name|escapejs }}', {{ product.price }}, '{{ product.description|escapejs }}', '{{ product.image.url }}')">
-                        QUICK VIEW
-                    </button>
+                    <!-- Replaced Quick View with a Dedicated Page Link -->
+                    <a href="{% url 'product_detail' product.id %}" target="_blank" class="btn-gold" 
+                       style="position: absolute; bottom: 0; left: 0; width: 100%; padding: 15px; font-size: 0.7rem; opacity: 0.95; text-align: center; text-decoration: none; background: var(--gold); color: white; letter-spacing: 2px;">
+                        VIEW DETAILS
+                    </a>
                 </div>
 
                 <div class="product-info" style="padding: 20px 0;">
@@ -63,79 +66,17 @@
     </section>
 </div>
 
-<div id="quickview-modal" style="display:none; position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 5000; align-items: center; justify-content: center; padding: 20px; backdrop-filter: blur(8px);">
-    <div style="background: white; max-width: 900px; width: 100%; display: flex; position: relative; max-height: 90vh; border-radius: 2px; overflow: hidden; box-shadow: 0 20px 50px rgba(0,0,0,0.3);">
-        <span onclick="closeQuickView()" style="position: absolute; right: 25px; top: 15px; font-size: 35px; cursor: pointer; z-index: 10; color: #1a1a1a;">&times;</span>
-        
-        <div style="flex: 1; background: #fdfaf5; display: flex; align-items: center; justify-content: center; overflow: hidden;">
-            <img id="qv-img" src="" style="width: 100%; height: 100%; object-fit: cover;">
-        </div>
-        
-        <div style="flex: 1; padding: 60px; display: flex; flex-direction: column; justify-content: center; background: #fff;">
-            <span style="letter-spacing: 3px; font-size: 0.7rem; color: var(--gold); margin-bottom: 12px; font-weight: 600;">RASAYAM EXCLUSIVE</span>
-            <h2 id="qv-name" class="playfair" style="font-size: 2.4rem; margin-bottom: 15px; line-height: 1.2;"></h2>
-            <p id="qv-price" style="font-size: 1.6rem; color: var(--gold); font-weight: 700; margin-bottom: 25px;"></p>
-            
-            <div style="height: 1px; background: #f0f0f0; margin-bottom: 25px;"></div>
-            <p id="qv-desc" style="color: #666; margin-bottom: 35px; line-height: 1.8; font-size: 0.95rem;"></p>
-            
-            <button id="qv-add-btn" class="btn-gold" style="width: 100%; padding: 18px; font-weight: 700; cursor: pointer; background: #1a1a1a; color: white; border: none; letter-spacing: 2px;">
-                ADD TO SELECTION
-            </button>
-            
-            <p style="margin-top: 35px; font-size: 0.75rem; color: #aaa; font-style: italic; border-top: 1px solid #f9f9f9; padding-top: 20px;">
-                ✨ Complimentary boutique packaging & shipping included.
-            </p>
-        </div>
-    </div>
-</div>
+<!-- Modal HTML and Quick View JS have been removed to clean up the code -->
 
 <script>
     // Global list of IDs currently in cart (passed from Django)
     const cartProductIds = {{ cart_product_ids|safe }};
 
-    function openQuickView(id, name, price, desc, img) {
-        document.getElementById('qv-name').innerText = name;
-        document.getElementById('qv-price').innerText = '₹' + price.toLocaleString('en-IN');
-        document.getElementById('qv-desc').innerText = desc;
-        document.getElementById('qv-img').src = img;
-        
-        const qvBtn = document.getElementById('qv-add-btn');
-        
-        // Check if item is already in selection
-        if (cartProductIds.includes(parseInt(id))) {
-            qvBtn.innerText = "IN SELECTION";
-            qvBtn.style.background = "#D4AF37"; // Gold
-            qvBtn.disabled = true;
-            qvBtn.onclick = null;
-        } else {
-            qvBtn.innerText = "ADD TO SELECTION";
-            qvBtn.style.background = "#1a1a1a";
-            qvBtn.disabled = false;
-            // Link the modal button to our async function
-            qvBtn.onclick = function() { addToCartAsync(id, true); };
-        }
-        
-        document.getElementById('quickview-modal').style.display = 'flex';
-    }
+    function addToCartAsync(productId) {
+        const targetBtn = document.getElementById(`add-btn-${productId}`);
+        if(!targetBtn) return;
 
-    function closeQuickView() {
-        document.getElementById('quickview-modal').style.display = 'none';
-    }
-
-    window.onclick = function(event) {
-        let modal = document.getElementById('quickview-modal');
-        if (event.target == modal) closeQuickView();
-    }
-
-    function addToCartAsync(productId, isFromModal = false) {
-        // Find the right button to update
-        const gridBtn = document.getElementById(`add-btn-${productId}`);
-        const modalBtn = document.getElementById('qv-add-btn');
-        
-        const targetBtn = isFromModal ? modalBtn : gridBtn;
         const originalText = targetBtn.innerText;
-        
         targetBtn.innerText = "ADDING...";
         targetBtn.style.opacity = "0.7";
 
@@ -146,24 +87,15 @@
         .then(response => response.json())
         .then(data => {
             if (data.status === 'success') {
-                // 1. Update Navbar Badge
                 const badge = document.getElementById('cart-count');
                 if(badge) badge.innerText = data.cart_count;
 
-                // 2. Update UI State for both buttons if they exist
-                const updateButton = (btn) => {
-                    if(!btn) return;
-                    btn.innerText = "IN SELECTION";
-                    btn.style.background = "#D4AF37"; // Rasayam Gold
-                    btn.style.opacity = "1";
-                    btn.disabled = true;
-                    btn.onclick = null;
-                };
+                targetBtn.innerText = "IN SELECTION";
+                targetBtn.style.background = "#D4AF37"; // Rasayam Gold
+                targetBtn.style.opacity = "1";
+                targetBtn.disabled = true;
+                targetBtn.onclick = null;
 
-                updateButton(gridBtn);
-                updateButton(modalBtn);
-
-                // 3. Update the local JS list so Quick View stays synced
                 cartProductIds.push(parseInt(productId));
             }
         })
