@@ -98,7 +98,7 @@ class OrderItemInline(TabularInline):
 
 @admin.register(Order)
 class OrderAdmin(ModelAdmin):
-    list_display = ('id', 'user', 'total_amount', 'is_paid', 'status', 'created_at', 'sizes')
+    list_display = ('id', 'user', 'total_amount', 'is_paid', 'status', 'created_at')
     list_filter = ('is_paid', 'status', 'created_at')
     
     # Razorpay fields are locked to maintain transaction integrity
