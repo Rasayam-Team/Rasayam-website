@@ -9,6 +9,15 @@ https://docs.djangoproject.com/en/6.0/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/6.0/ref/settings/
 """
+
+
+import os
+CLOUDINARY_STORAGE = {
+    'CLOUD_NAME': os.environ.get('CLOUDINARY_CLOUD_NAME'),
+    'API_KEY': os.environ.get('CLOUDINARY_API_KEY'),
+    'API_SECRET': os.environ.get('CLOUDINARY_API_SECRET')
+}
+
 import os
 from dotenv import load_dotenv
 
@@ -40,6 +49,11 @@ INSTALLED_APPS = [
     "unfold.contrib.filters",  # For better sidebar filters
     "unfold.contrib.forms",    # For modern form layouts
     "unfold.contrib.import_export",  # For that bulk upload feature we want
+
+
+    'cloudinary_storage',
+    'django.contrib.staticfiles',
+    'cloudinary',
 
 
     'django.contrib.admin',
@@ -238,3 +252,6 @@ RAZORPAY_KEY_ID = os.getenv('RAZORPAY_KEY_ID')
 RAZORPAY_KEY_SECRET = os.getenv('RAZORPAY_KEY_SECRET')
 
 LOGIN_URL = 'login'
+
+# Set Cloudinary as the storage backend
+DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
