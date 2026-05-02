@@ -79,12 +79,17 @@
 
 <section class="offers-section container" style="padding-bottom: 60px;">
     <h3>Exclusive Offers</h3>
-    <div class="offers-grid">
+    <div class="offers-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px;">
         {% for promo in promos %}
         <div class="offer-card" style="background: #fdfaf0; padding: 25px; border: 1px solid #eee;">
             <h4>{{ promo.title }}</h4>
             <p>{{ promo.subtitle }}</p>
-            <a href="{{ promo.link_url }}" style="text-decoration: none; color: #5d4037; font-weight: 600;">{{ promo.link_text }} ›</a>
+            
+            {% if promo.link_url %}
+                <a href="{{ promo.link_url }}" style="text-decoration: none; color: #5d4037; font-weight: 600;">
+                    {{ promo.link_text|default:"Shop Now" }} ›
+                </a>
+            {% endif %}
         </div>
         {% endfor %}
     </div>

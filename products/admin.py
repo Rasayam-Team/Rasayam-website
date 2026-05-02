@@ -35,7 +35,11 @@ class BannerAdmin(ModelAdmin):
 
 @admin.register(PromoBox)
 class PromoBoxAdmin(ModelAdmin):
-    list_display = ('title', 'subtitle', 'order')
+    # Added 'link_text' and 'link_url' so you can see them in the table
+    list_display = ('title', 'subtitle', 'link_text', 'link_url', 'order')
+    
+    # This lets you update the order and links directly from the list page!
+    list_editable = ('order', 'link_text', 'link_url')
 
 @admin.register(Category)
 class CategoryAdmin(ModelAdmin):

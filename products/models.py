@@ -26,14 +26,22 @@ class Banner(models.Model):
     def __str__(self):
         return self.title or f"Banner {self.id}"
 
+
 class PromoBox(models.Model):
     title = models.CharField(max_length=100)
     subtitle = models.CharField(max_length=200, blank=True)
+    # The URL destination (e.g., /shop/ or /collection/festive/)
+    link_url = models.CharField(max_length=500, blank=True, null=True)
+    # The text on the button (e.g., "Shop Now" or "Explore")
+    link_text = models.CharField(max_length=50, default="Shop Now")
     order = models.IntegerField(default=0)
 
     class Meta:
         verbose_name_plural = "Promo Boxes"
+        ordering = ['order']
 
+    def __str__(self):
+        return self.title
 # --- 2. Catalog ---
 class Category(models.Model):
     name = models.CharField(max_length=100)
