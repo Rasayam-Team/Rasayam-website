@@ -209,6 +209,7 @@ def save_order(request):
 
     total_amount = sum(item.total_item_price for item in cart_items)
 
+    # 1. Create the Order record (status stays 'Pending')
     order = Order.objects.create(
         user=request.user,
         total_amount=total_amount,
@@ -236,7 +237,8 @@ def save_order(request):
         order.razorpay_order_id = razorpay_order['id']
         order.save()
 
-        cart_items.delete()
+        # --- IMPORTANT: REMOVED cart_items.delete() FROM HERE ---
+        # Items stay in cart until payment_verify confirms success.
 
         return render(request, 'products/payment.html', {
             'order': order,
@@ -247,6 +249,7 @@ def save_order(request):
     except Exception as e:
         messages.error(request, f"Gateway Error: {str(e)}")
         return redirect('cart')
+    
 
 @csrf_exempt
 @login_required
@@ -264,8 +267,10 @@ def payment_verify(request):
                 'razorpay_signature': signature
             }
 
+            # 1. Security Check: Verify the signature from Razorpay
             razorpay_client.utility.verify_payment_signature(params_dict)
 
+            # 2. Update the Order in your database
             order = Order.objects.get(razorpay_order_id=razorpay_order_id)
             order.razorpay_payment_id = payment_id
             order.razorpay_signature = signature
@@ -273,13 +278,23 @@ def payment_verify(request):
             order.status = 'Paid'
             order.save()
 
-            messages.success(request, "Payment verified!")
+            # 3. SUCCESS: Clear the User's Cart now
+            # This is the crucial fix. It only runs if the payment is verified.
+            CartItem.objects.filter(cart__user=request.user).delete()
+
+            messages.success(request, "Payment verified! Your order is being prepared.")
             return redirect('payment_success', order_id=order.id)
 
         except Exception as e:
+            # 4. FAILURE: Verification failed or signature was invalid
             print("Verification Error:", str(e))
+            
+            # Note: Because 'save_order' no longer deletes the cart, 
+            # the user can come back here, and their items will still be there.
             return redirect('payment_fail')
+            
     return redirect('shop')
+
 
 @login_required
 def order_detail_view(request, order_id):
@@ -335,11 +350,29 @@ def add_to_cart_ajax(request, product_id):
     })
 
 def payment_success(request, order_id):
+    """
+    Renders the success page after a confirmed transaction.
+    """
+    # Ensure the user can only see their own order success page
     order = get_object_or_404(Order, id=order_id, user=request.user)
-    return render(request, 'products/payment_success.html', {'order': order})
+    
+    context = {
+        'order': order,
+        'title': 'Thank You for Your Selection'
+    }
+    return render(request, 'products/payment_success.html', context)
 
 def payment_fail(request):
-    return render(request, 'products/payment_fail.html')
+    """
+    Renders the failure page. The cart remains full, allowing 
+    the customer to return and try again.
+    """
+    # We can add a helpful message to guide them back to the cart
+    messages.warning(request, "Your payment could not be processed. Your selection is still safe in your bag.")
+    
+    return render(request, 'products/payment_fail.html', {
+        'title': 'Transaction Unsuccessful'
+    })
 
 # --- Policy Pages ---
 def privacy(request): return render(request, 'products/privacy.html')
