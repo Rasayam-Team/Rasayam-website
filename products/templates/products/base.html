@@ -3,7 +3,6 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <!-- Fixed: Only one viewport tag needed -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}RASAYAM | Luxury Ethnic Wear{% endblock %}</title>
     
@@ -14,29 +13,15 @@
     <style>
         /* Centering for the Banner */
         .banner-content {
-            width: 100%;
-            height: 75vh;
-            background-size: cover;
-            background-position: center;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-            color: white;
-            position: relative;
+            width: 100%; height: 75vh; background-size: cover; background-position: center;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            text-align: center; color: white; position: relative;
         }
         .hero-overlay {
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0, 0, 0, 0.25);
-            z-index: 1;
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.25); z-index: 1;
         }
-        .hero-text-container {
-            position: relative;
-            z-index: 2;
-            padding: 0 20px;
-        }
+        .hero-text-container { position: relative; z-index: 2; padding: 0 20px; }
 
         /* --- MOBILE RESPONSIVE FIXES --- */
         .menu-toggle { display: none; }
@@ -49,34 +34,27 @@
         @media (max-width: 768px) {
             .nav-flex { justify-content: space-between; align-items: center; padding: 10px 20px; }
             .hamburger { display: block; z-index: 1001; }
-            
-            /* Hide links on mobile by default */
             .nav-links {
-                display: none;
-                flex-direction: column;
-                position: absolute;
-                top: 100%; left: 0; width: 100%;
-                background: white;
-                padding: 20px;
-                box-shadow: 0 10px 15px rgba(0,0,0,0.1);
-                z-index: 1000;
+                display: none; flex-direction: column; position: absolute;
+                top: 100%; left: 0; width: 100%; background: white;
+                padding: 20px; box-shadow: 0 10px 15px rgba(0,0,0,0.1); z-index: 1000;
             }
-
-            /* Show links when checkbox is checked */
             #menu-check:checked ~ .nav-links { display: flex; }
-
             .nav-links li { margin: 15px 0; text-align: center; }
-
-            /* Scaling Hero Text for Heritage Collection */
             .hero-text-container h1 { font-size: 2.2rem !important; line-height: 1.1; }
             .hero-text-container p { font-size: 0.85rem !important; letter-spacing: 2px; }
-
-            /* Footer Stacking */
             .footer-top { flex-direction: column; text-align: center; }
             .footer-col { margin-bottom: 30px; width: 100%; }
-            .app-buttons { justify-content: center; }
-            .payment-icons { justify-content: center; }
         }
+
+        /* Wishlist Selection Styling */
+        .collection-option {
+            width: 100%; padding: 12px; background: #f9f9f9; border: 1px solid #eee;
+            cursor: pointer; font-size: 0.8rem; text-align: left; transition: 0.3s;
+            text-transform: uppercase; letter-spacing: 1px;
+        }
+        .collection-option:hover { background: #f0f0f0; }
+        .collection-option.selected { border-color: #b89c7d; background: #fff; }
     </style>
 </head>
 <body>
@@ -91,7 +69,6 @@
         <div class="container nav-flex">
             <div class="logo"><a href="{% url 'index' %}">RASAYAM</a></div>
             
-            <!-- Hamburger Logic -->
             <input type="checkbox" id="menu-check" class="menu-toggle">
             <label for="menu-check" class="hamburger">
                 <span></span><span></span><span></span>
@@ -126,8 +103,13 @@
                     </li>
                 {% endif %}
 
-                <li>
-                    <a href="{% url 'cart' %}" class="cart-icon">
+                <li style="display: flex; align-items: center; gap: 20px; justify-content: center;">
+                    <a href="{% url 'collections' %}" title="My Collections" style="text-decoration: none; color: inherit; display: flex; align-items: center;">
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l8.84-8.84 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+                        </svg>
+                    </a>
+                    <a href="{% url 'cart' %}" class="cart-icon" style="position: relative; display: flex; align-items: center;">
                         <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
                             <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"></path>
                             <line x1="3" y1="6" x2="21" y2="6"></line>
@@ -143,22 +125,25 @@
     <main>
         {% block content %}{% endblock %}
     </main>
-    <div id="wishlist-modal" style="display:none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 9999; align-items: center; justify-content: center; backdrop-filter: blur(4px);">
-        <div style="background: white; width: 350px; padding: 30px; border-radius: 8px; text-align: center;">
-            <h3 class="playfair" style="margin-bottom: 20px;">Save to Collection</h3>
+
+    <!-- GLOBAL WISHLIST MODAL -->
+    <div id="wishlist-modal" style="display:none; position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 9999; align-items: center; justify-content: center; backdrop-filter: blur(8px);">
+        <div style="background: white; width: 400px; padding: 40px; border-radius: 2px; text-align: center; box-shadow: 0 20px 50px rgba(0,0,0,0.3);">
+            <h3 class="playfair" style="font-size: 1.8rem; margin-bottom: 10px;">Save Selection</h3>
+            <p style="font-size: 0.8rem; color: #888; margin-bottom: 30px; letter-spacing: 1px; text-transform: uppercase;">Organize Your Curated Pieces</p>
             
-            <!-- List of existing wishlists -->
-            <div id="wishlist-options" style="max-height: 200px; overflow-y: auto; margin-bottom: 20px;">
+            <div id="wishlist-options" style="max-height: 200px; overflow-y: auto; margin-bottom: 25px; display: flex; flex-direction: column; gap: 10px;">
                 <!-- Loaded via JS -->
             </div>
 
-            <input type="text" id="new-wishlist-name" placeholder="+ New Collection Name" 
-                style="width: 100%; padding: 10px; border: 1px solid #eee; margin-bottom: 20px;">
+            <input type="text" id="new-wishlist-name" placeholder="+ CREATE NEW COLLECTION" 
+                   style="width: 100%; padding: 15px; border: 1px solid #eee; margin-bottom: 25px; font-size: 0.8rem; letter-spacing: 1px; outline: none;">
             
-            <button onclick="submitWishlist()" class="btn-gold" style="width: 100%; padding: 15px; border: none; background: #1a1a1a; color: white; cursor: pointer;">SAVE</button>
-            <button onclick="closeWishlistModal()" style="margin-top: 15px; background: none; border: none; color: #aaa; cursor: pointer;">Cancel</button>
+            <button onclick="submitWishlist()" style="width: 100%; padding: 18px; background: #1a1a1a; color: white; border: none; font-weight: 700; letter-spacing: 2px; cursor: pointer; text-transform: uppercase;">Save to Collection</button>
+            <button onclick="closeWishlistModal()" style="margin-top: 20px; background: none; border: none; color: #aaa; cursor: pointer; font-size: 0.8rem; letter-spacing: 1px; text-transform: uppercase;">Cancel</button>
         </div>
     </div>
+
     <footer class="main-footer">
         <div class="container footer-top" style="display: flex; flex-wrap: wrap;">
             <div class="footer-col">
@@ -168,13 +153,6 @@
                     <p>+91-XXX-XXX-XXXX</p>
                     <p>support@rasayam.com</p>
                 </div>
-                <div class="app-links">
-                    <p><strong>Experience RASAYAM on Mobile</strong></p>
-                    <div class="app-buttons" style="display: flex; flex-wrap: wrap; gap: 10px;">
-                        <img src="{% static 'images/app-store.png' %}" alt="App Store" style="width: 120px;">
-                        <img src="{% static 'images/google-play.png' %}" alt="Google Play" style="width: 120px;">
-                    </div>
-                </div>
             </div>
 
             <div class="footer-col">
@@ -183,7 +161,6 @@
                     <li><a href="#">Daily Wear Kurtis</a></li>
                     <li><a href="#">Festive Collection</a></li>
                     <li><a href="#">Cotton Handlooms</a></li>
-                    <li><a href="#">New Arrivals</a></li>
                 </ul>
             </div>
 
@@ -192,24 +169,14 @@
                 <ul>
                     <li><a href="{% url 'about' %}">About Us</a></li>
                     <li><a href="{% url 'contact' %}">Contact Us</a></li>
-                    <li><a href="#">Track Orders</a></li>
-                    <li><a href="#">FAQs</a></li>
+                    <li><a href="{% url 'terms' %}">Terms of Use</a></li>
                 </ul>
             </div>
 
             <div class="footer-col">
-                <h4>Our Policies</h4>
-                <ul>
-                    <li><a href="{% url 'terms' %}">Terms of Use</a></li>
-                    <li><a href="{% url 'privacy' %}">Privacy Policy</a></li>
-                    <li><a href="{% url 'refund' %}">Exchange & Returns</a></li>
-                    <li><a href="{% url 'shipping' %}">Shipping Policy</a></li>
-                </ul>
-                <div class="payment-methods">
-                    <p><strong>Pay Securely By</strong></p>
-                    <div class="payment-icons" style="color: #999; font-size: 0.8rem; gap: 10px; display: flex;">
-                        <span>VISA</span> <span>Mastercard</span> <span>UPI</span> <span>RuPay</span>
-                    </div>
+                <h4>Secure Payments</h4>
+                <div class="payment-icons" style="color: #999; font-size: 0.8rem; gap: 10px; display: flex; margin-top: 15px;">
+                    <span>VISA</span> <span>Mastercard</span> <span>UPI</span> <span>RuPay</span>
                 </div>
             </div>
         </div>
@@ -222,6 +189,91 @@
     </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+    
+    <script>
+        let activeProductId = null;
+        let selectedWishlistId = null;
+
+        function openWishlistModal(productId) {
+            {% if not user.is_authenticated %}
+                window.location.href = "{% url 'login' %}";
+                return;
+            {% endif %}
+
+            activeProductId = productId;
+            const modal = document.getElementById('wishlist-modal');
+            const optionsDiv = document.getElementById('wishlist-options');
+            optionsDiv.innerHTML = '<p style="font-size: 0.8rem; color: #ccc;">Loading your collections...</p>';
+            modal.style.display = 'flex';
+
+            fetch('/get-wishlists/')
+                .then(res => res.json())
+                .then(data => {
+                    optionsDiv.innerHTML = '';
+                    if (data.length === 0) {
+                        optionsDiv.innerHTML = '<p style="font-size: 0.8rem; color: #888; margin-bottom: 10px;">No collections yet.</p>';
+                    } else {
+                        data.forEach(wl => {
+                            const btn = document.createElement('button');
+                            btn.innerText = wl.name;
+                            btn.className = 'collection-option';
+                            btn.onclick = () => selectCollection(wl.id, btn);
+                            optionsDiv.appendChild(btn);
+                        });
+                    }
+                });
+        }
+
+        function selectCollection(id, btn) {
+            document.querySelectorAll('.collection-option').forEach(b => b.classList.remove('selected'));
+            btn.classList.add('selected');
+            selectedWishlistId = id;
+            document.getElementById('new-wishlist-name').value = ''; // Clear new name if existing selected
+        }
+
+        function closeWishlistModal() {
+            document.getElementById('wishlist-modal').style.display = 'none';
+            selectedWishlistId = null;
+            activeProductId = null;
+            document.getElementById('new-wishlist-name').value = '';
+        }
+
+        function submitWishlist() {
+            const newName = document.getElementById('new-wishlist-name').value.trim();
+            if (!selectedWishlistId && !newName) {
+                alert("Please select a collection or create a new one.");
+                return;
+            }
+
+            fetch('/add-to-wishlist/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': '{{ csrf_token }}'
+                },
+                body: JSON.stringify({
+                    product_id: activeProductId,
+                    wishlist_id: selectedWishlistId,
+                    new_name: newName
+                })
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    alert(data.message);
+                    closeWishlistModal();
+                }
+            })
+            .catch(err => console.error('Wishlist Error:', err));
+        }
+
+        // Close modal on outside click
+        window.onclick = function(event) {
+            const modal = document.getElementById('wishlist-modal');
+            if (event.target == modal) closeWishlistModal();
+        }
+    </script>
+
     {% block extra_js %}{% endblock %}
 </body>
 </html>

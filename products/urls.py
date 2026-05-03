@@ -24,6 +24,7 @@ urlpatterns = [
      # --- Wishlist Logic ---
     path('get-wishlists/', views.get_wishlists, name='get_wishlists'),
     path('add-to-wishlist/', views.add_to_wishlist, name='add_to_wishlist'),
+    path('collections/', views.collections_view, name='collections'),
     
     # --- Orders & Razorpay Payments ---
     path('save-order/', views.save_order, name='save_order'),

@@ -410,3 +410,11 @@ def add_to_wishlist(request):
 
         WishlistItem.objects.get_or_create(wishlist=wishlist, product=product)
         return JsonResponse({'status': 'success', 'message': f'Saved to {wishlist.name}'})
+
+@login_required
+def collections_view(request):
+    """Fetches all of the user's named wishlists and the items inside them."""
+    # prefetch_related makes loading the images much faster
+    user_collections = request.user.wishlists.prefetch_related('items__product').order_by('-created_at')
+    return render(request, 'products/collections.html', {'collections': user_collections})
+    
