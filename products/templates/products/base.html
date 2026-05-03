@@ -143,7 +143,22 @@
     <main>
         {% block content %}{% endblock %}
     </main>
+    <div id="wishlist-modal" style="display:none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 9999; align-items: center; justify-content: center; backdrop-filter: blur(4px);">
+        <div style="background: white; width: 350px; padding: 30px; border-radius: 8px; text-align: center;">
+            <h3 class="playfair" style="margin-bottom: 20px;">Save to Collection</h3>
+            
+            <!-- List of existing wishlists -->
+            <div id="wishlist-options" style="max-height: 200px; overflow-y: auto; margin-bottom: 20px;">
+                <!-- Loaded via JS -->
+            </div>
 
+            <input type="text" id="new-wishlist-name" placeholder="+ New Collection Name" 
+                style="width: 100%; padding: 10px; border: 1px solid #eee; margin-bottom: 20px;">
+            
+            <button onclick="submitWishlist()" class="btn-gold" style="width: 100%; padding: 15px; border: none; background: #1a1a1a; color: white; cursor: pointer;">SAVE</button>
+            <button onclick="closeWishlistModal()" style="margin-top: 15px; background: none; border: none; color: #aaa; cursor: pointer;">Cancel</button>
+        </div>
+    </div>
     <footer class="main-footer">
         <div class="container footer-top" style="display: flex; flex-wrap: wrap;">
             <div class="footer-col">

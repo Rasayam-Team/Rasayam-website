@@ -70,7 +70,7 @@
                 </button>
             </form>
 
-            <!-- Live Buy Now (Goes straight to Checkout) -->
+            <!-- Live Buy Now -->
             <form action="{% url 'add_to_cart' product.id %}" method="POST">
                 {% csrf_token %}
                 <input type="hidden" name="buy_now" value="true">
@@ -79,6 +79,13 @@
                     BUY IT NOW
                 </button>
             </form>
+
+            <!-- NEW: Save to Collection Button -->
+            <button onclick="openWishlistModal('{{ product.id }}')" 
+                    style="width: 100%; padding: 20px; background: #fff; color: var(--gold); border: 1px solid var(--gold); font-size: 0.8rem; letter-spacing: 2px; font-weight: 700; cursor: pointer; transition: 0.4s;"
+                    onmouseover="this.style.background='var(--gold)'; this.style.color='white'" onmouseout="this.style.background='#fff'; this.style.color='var(--gold)'">
+                SAVE TO COLLECTION
+            </button>
         </div>
 
         <!-- Luxury Highlights -->
@@ -101,7 +108,27 @@
     </div>
 </section>
 
+<!-- Wishlist Modal -->
+<div id="wishlist-modal" style="display:none; position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 9999; align-items: center; justify-content: center; backdrop-filter: blur(8px);">
+    <div style="background: white; width: 400px; padding: 40px; border-radius: 2px; text-align: center; box-shadow: 0 20px 50px rgba(0,0,0,0.3);">
+        <h3 class="playfair" style="font-size: 1.8rem; margin-bottom: 10px;">Save Selection</h3>
+        <p style="font-size: 0.8rem; color: #888; margin-bottom: 30px; letter-spacing: 1px;">ORGANIZE YOUR CURATED PIECES</p>
+        
+        <div id="wishlist-options" style="max-height: 200px; overflow-y: auto; margin-bottom: 25px; display: flex; flex-direction: column; gap: 10px;">
+            <!-- Existing collections will load here via JavaScript -->
+        </div>
+
+        <input type="text" id="new-wishlist-name" placeholder="+ CREATE NEW COLLECTION" 
+               style="width: 100%; padding: 15px; border: 1px solid #eee; margin-bottom: 25px; font-size: 0.8rem; letter-spacing: 1px; outline: none;">
+        
+        <button onclick="submitWishlist()" style="width: 100%; padding: 18px; background: #1a1a1a; color: white; border: none; font-weight: 700; letter-spacing: 2px; cursor: pointer;">SAVE TO COLLECTION</button>
+        <button onclick="closeWishlistModal()" style="margin-top: 20px; background: none; border: none; color: #aaa; cursor: pointer; font-size: 0.8rem; letter-spacing: 1px;">CANCEL</button>
+    </div>
+</div>
+
 <script>
+    let activeProductId = null;
+
     function selectSize(btn) {
         document.querySelectorAll('.size-btn').forEach(b => {
             b.style.borderColor = '#ddd';
@@ -111,6 +138,80 @@
         btn.style.borderColor = '#1a1a1a';
         btn.style.background = '#1a1a1a';
         btn.style.color = 'white';
+    }
+
+    function openWishlistModal(productId) {
+        activeProductId = productId;
+        const modal = document.getElementById('wishlist-modal');
+        const optionsDiv = document.getElementById('wishlist-options');
+        optionsDiv.innerHTML = '<p style="font-size: 0.8rem; color: #ccc;">Loading your collections...</p>';
+        
+        modal.style.display = 'flex';
+
+        fetch('/get-wishlists/')
+            .then(res => res.json())
+            .then(data => {
+                optionsDiv.innerHTML = '';
+                if (data.length === 0) {
+                    optionsDiv.innerHTML = '<p style="font-size: 0.8rem; color: #888; margin-bottom: 10px;">No collections yet.</p>';
+                } else {
+                    data.forEach(wl => {
+                        const btn = document.createElement('button');
+                        btn.innerText = wl.name;
+                        btn.className = 'collection-option';
+                        btn.style = "width: 100%; padding: 12px; background: #f9f9f9; border: 1px solid #eee; cursor: pointer; font-size: 0.8rem; text-align: left; transition: 0.3s;";
+                        btn.onclick = () => selectCollection(wl.id, btn);
+                        optionsDiv.appendChild(btn);
+                    });
+                }
+            });
+    }
+
+    let selectedWishlistId = null;
+
+    function selectCollection(id, btn) {
+        document.querySelectorAll('.collection-option').forEach(b => {
+            b.style.background = '#f9f9f9';
+            b.style.borderColor = '#eee';
+        });
+        btn.style.background = '#fff';
+        btn.style.borderColor = 'var(--gold)';
+        selectedWishlistId = id;
+    }
+
+    function closeWishlistModal() {
+        document.getElementById('wishlist-modal').style.display = 'none';
+        selectedWishlistId = null;
+        document.getElementById('new-wishlist-name').value = '';
+    }
+
+    function submitWishlist() {
+        const newName = document.getElementById('new-wishlist-name').value.trim();
+        
+        if (!selectedWishlistId && !newName) {
+            alert("Please select a collection or create a new one.");
+            return;
+        }
+
+        fetch('/add-to-wishlist/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': '{{ csrf_token }}'
+            },
+            body: JSON.stringify({
+                product_id: activeProductId,
+                wishlist_id: selectedWishlistId,
+                new_name: newName
+            })
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.status === 'success') {
+                alert(data.message);
+                closeWishlistModal();
+            }
+        });
     }
 </script>
 {% endblock %}

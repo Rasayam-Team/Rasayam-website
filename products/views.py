@@ -13,7 +13,8 @@ from django.utils import timezone
 from .models import (
     Product, Banner, Category, PromoBox, 
     CustomerProfile, ContactInquiry, Order, OrderItem, Review,
-    Cart, CartItem, Size, ProductImage
+    Cart, CartItem, Size, ProductImage,
+    Wishlist, WishlistItem
 )
 
 # --- Razorpay Client Initialization ---
@@ -193,7 +194,8 @@ def logout_view(request):
 
 @login_required
 def profile_view(request):
-    orders = request.user.orders.all().order_by('-created_at')
+    # We only want to show orders that were successfully completed
+    orders = request.user.orders.filter(is_paid=True).order_by('-created_at')
     return render(request, 'products/profile.html', {'orders': orders})
 
 # --- 4. Order & Cart Processing (with Razorpay) ---
@@ -298,7 +300,8 @@ def payment_verify(request):
 
 @login_required
 def order_detail_view(request, order_id):
-    order = get_object_or_404(Order, id=order_id, user=request.user)
+    # This prevents users from accessing an unpaid order detail page via a direct URL
+    order = get_object_or_404(Order, id=order_id, user=request.user, is_paid=True)
     return render(request, 'products/order_detail.html', {'order': order})
 
 @login_required
@@ -379,3 +382,31 @@ def privacy(request): return render(request, 'products/privacy.html')
 def refund(request): return render(request, 'products/refund.html')
 def shipping(request): return render(request, 'products/shipping.html')
 def terms(request): return render(request, 'products/terms.html')
+
+
+@login_required
+def get_wishlists(request):
+    """Returns a list of the user's wishlists for the Save modal"""
+    wishlists = request.user.wishlists.all().values('id', 'name')
+    return JsonResponse(list(wishlists), safe=False)
+
+@login_required
+@csrf_exempt
+def add_to_wishlist(request):
+    """Saves a product to a specific or brand new wishlist"""
+    if request.method == "POST":
+        data = json.loads(request.body)
+        product_id = data.get('product_id')
+        wishlist_id = data.get('wishlist_id')
+        new_name = data.get('new_name')
+
+        product = get_object_or_404(Product, id=product_id)
+
+        if new_name:
+            # Create a brand new "Instagram-style" collection
+            wishlist, _ = Wishlist.objects.get_or_create(user=request.user, name=new_name)
+        else:
+            wishlist = get_object_or_404(Wishlist, id=wishlist_id, user=request.user)
+
+        WishlistItem.objects.get_or_create(wishlist=wishlist, product=product)
+        return JsonResponse({'status': 'success', 'message': f'Saved to {wishlist.name}'})

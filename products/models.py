@@ -157,3 +157,22 @@ class CartItem(models.Model):
     @property
     def total_item_price(self):
         return self.product.price * self.quantity
+    
+
+class Wishlist(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='wishlists')
+    name = models.CharField(max_length=100)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ('user', 'name') # Prevents duplicate collection names for one user
+
+    def __str__(self):
+        return f"{self.name} ({self.user.username})"
+
+class WishlistItem(models.Model):
+    wishlist = models.ForeignKey(Wishlist, on_delete=models.CASCADE, related_name='items')
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return f"{self.product.name} in {self.wishlist.name}"

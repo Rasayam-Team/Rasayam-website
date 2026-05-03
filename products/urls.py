@@ -21,6 +21,10 @@ urlpatterns = [
     path('product/<int:pk>/', views.product_detail_view, name='product_detail'),
     path('product/<int:pk>/', views.product_detail_view, name='product_detail'),
     
+     # --- Wishlist Logic ---
+    path('get-wishlists/', views.get_wishlists, name='get_wishlists'),
+    path('add-to-wishlist/', views.add_to_wishlist, name='add_to_wishlist'),
+    
     # --- Orders & Razorpay Payments ---
     path('save-order/', views.save_order, name='save_order'),
     
