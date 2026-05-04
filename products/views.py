@@ -53,8 +53,9 @@ def shop(request):
         'cart_product_ids': cart_product_ids
     })
 
-def about(request):
-    reviews = Review.objects.all().order_by('-created_at')
+def about_view(request):
+    # Fetch all reviews, or just verified ones for a premium look
+    reviews = Review.objects.filter(is_verified=True).order_by('-id')
     return render(request, 'products/about.html', {'reviews': reviews})
 
 def contact(request):

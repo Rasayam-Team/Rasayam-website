@@ -29,22 +29,42 @@
     <p class="subtitle" style="letter-spacing: 3px; text-transform: uppercase; font-size: 0.8rem; color: var(--gold);">Voices from the RASAYAM Community</p>
 </section>
 
-<section class="container">
-    <div class="testimonial-grid">
-        {% for review in reviews %}
-        <div class="testimonial-card">
-            <div class="stars">
-                {% if review.stars == 5 %}★★★★★{% elif review.stars == 4 %}★★★★☆{% else %}★★★☆☆{% endif %}
-            </div>
-            <p style="line-height: 1.8; color: #555 italic;">"{{ review.content }}"</p>
-            <div class="customer-name">— {{ review.customer_name }}</div>
-            {% if review.is_verified %}
-            <span class="verified">Verified Purchase</span>
-            {% endif %}
+<section class="reviews-section" style="padding: 80px 0;">
+    <div class="container">
+        <h1 class="playfair" style="font-size: 3rem; text-align: center;">Customer Stories</h1>
+        <p style="text-align: center; color: var(--gold); letter-spacing: 2px; text-transform: uppercase; margin-bottom: 60px;">Voices from the Rasayam Community</p>
+
+        <div class="review-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 40px;">
+            {% for review in reviews %}
+                <div class="review-card" style="border: 1px solid #eee; padding: 40px; position: relative;">
+                    <!-- Dynamic Star Logic -->
+                    <div class="stars" style="color: var(--gold); margin-bottom: 20px;">
+                        {% for i in "12345" %}
+                            {% if forloop.counter <= review.rating %}
+                                ★
+                            {% else %}
+                                ☆
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+
+                    <p style="font-style: italic; line-height: 1.8; color: #555; margin-bottom: 25px;">
+                        "{{ review.comment }}"
+                    </p>
+
+                    <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #f9f9f9; padding-top: 20px;">
+                        <span style="font-weight: 600; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px;">
+                            — {{ review.user.username }}
+                        </span>
+                        <span style="font-size: 0.65rem; letter-spacing: 1px; color: #aaa; text-transform: uppercase;">
+                            Verified Purchase
+                        </span>
+                    </div>
+                </div>
+            {% empty %}
+                <p style="text-align: center; grid-column: 1/-1; color: #999;">The community stories are being gathered. Check back soon.</p>
+            {% endfor %}
         </div>
-        {% empty %}
-        <p class="text-center">No stories shared yet. Be the first!</p>
-        {% endfor %}
     </div>
 </section>
 

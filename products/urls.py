@@ -6,7 +6,7 @@ urlpatterns = [
     # --- Main Boutique Pages ---
     path('', views.index, name='index'),
     path('shop/', views.shop, name='shop'),
-    path('about/', views.about, name='about'),
+    path('about/', views.about_view, name='about'),
     path('contact/', views.contact, name='contact'),
     
     # --- Cart Logic ---
