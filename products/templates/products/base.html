@@ -153,7 +153,7 @@
     </div>
 
     <footer class="main-footer">
-        <div class="container footer-top" style="display: flex; flex-wrap: wrap;">
+        <div class="container footer-top"> <!-- Removed inline flex styles here -->
             <div class="footer-col">
                 <h2 class="footer-logo">RASAYAM</h2>
                 <div class="contact-info">
@@ -166,9 +166,9 @@
             <div class="footer-col">
                 <h4>Top Categories</h4>
                 <ul>
-                    <li><a href="#">Daily Wear Kurtis</a></li>
-                    <li><a href="#">Festive Collection</a></li>
-                    <li><a href="#">Cotton Handlooms</a></li>
+                    <li><a href="{% url 'shop' %}">Daily Wear Kurtis</a></li>
+                    <li><a href="{% url 'shop' %}">Festive Collection</a></li>
+                    <li><a href="{% url 'shop' %}">Cotton Handlooms</a></li>
                 </ul>
             </div>
 
@@ -183,15 +183,15 @@
 
             <div class="footer-col">
                 <h4>Secure Payments</h4>
-                <div class="payment-icons" style="color: #999; font-size: 0.8rem; gap: 10px; display: flex; margin-top: 15px;">
-                    <span>VISA</span> <span>Mastercard</span> <span>UPI</span> <span>RuPay</span>
+                <div class="payment-methods">
+                    <p style="font-size: 0.7rem; color: #666; letter-spacing: 1px;">VISA &bull; MASTERCARD &bull; UPI &bull; RUPAY</p>
                 </div>
             </div>
         </div>
 
         <div class="footer-bottom">
-            <div class="container" style="text-align: center; padding: 30px 0;">
-                <p style="color: #666; font-size: 0.8rem;">&copy; 2026 RASAYAM Boutique. All Rights Reserved.</p>
+            <div class="container" style="text-align: center; padding-top: 30px;">
+                <p style="color: #444; font-size: 0.75rem;">&copy; 2026 RASAYAM Boutique. All Rights Reserved.</p>
             </div>
         </div>
     </footer>
