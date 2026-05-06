@@ -1,0 +1,34 @@
+{% extends 'products/base.html' %}
+
+{% block content %}
+<div class="container" style="padding: 60px 0;">
+    <header style="margin-bottom: 40px; text-align: center;">
+        <h2 class="playfair" style="font-size: 2.5rem;">Search Results</h2>
+        <p style="color: #888;">Showing matches for: <strong>"{{ query }}"</strong></p>
+    </header>
+
+    {% if results %}
+        <div class="product-grid">
+            {% for product in results %}
+                <div class="product-card">
+                    <!-- Standard product card structure you use in shop.html -->
+                    <a href="{% url 'product_detail' product.id %}" style="text-decoration: none; color: inherit;">
+                        <div class="product-img-wrapper">
+                            <img src="{{ product.image.url }}" alt="{{ product.name }}">
+                        </div>
+                        <div class="product-info">
+                            <h4>{{ product.name }}</h4>
+                            <p class="price">₹{{ product.price }}</p>
+                        </div>
+                    </a>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div style="text-align: center; padding: 100px 0;">
+            <p style="font-size: 1.1rem; color: #666;">We couldn't find anything matching your search.</p>
+            <a href="{% url 'shop' %}" class="btn-gold" style="display: inline-block; margin-top: 20px; padding: 15px 30px; text-decoration: none;">BACK TO SHOP</a>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

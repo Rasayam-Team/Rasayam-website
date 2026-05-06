@@ -15,6 +15,7 @@ urlpatterns = [
     path('add-to-cart-ajax/<int:product_id>/', views.add_to_cart_ajax, name='add_to_cart_ajax'), # Moved here for grouping
     path('decrease-item/<int:item_id>/', views.decrease_cart_item, name='decrease_cart_item'),
     path('remove-from-cart/<int:item_id>/', views.remove_from_cart, name='remove_from_cart'),
+    path('search/', views.search_view, name='search'),
     
     # --- Product & Category Logic ---
     path('collection/<slug:slug>/', views.category_detail, name='category_detail'),

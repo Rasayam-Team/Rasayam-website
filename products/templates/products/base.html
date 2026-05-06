@@ -101,10 +101,23 @@
                 </ul>
             </div>
 
-            <!-- EXTREME RIGHT: Wishlist & Cart -->
-            <div class="nav-right">
+            <!-- EXTREME RIGHT: Search, Wishlist & Cart -->
+            <div class="nav-right" style="display: flex; align-items: center; gap: 20px;">
+                
+                <!-- Minimalist Search Bar -->
+                <form action="{% url 'search' %}" method="GET" style="position: relative; margin-right: 10px;">
+                    <input type="text" name="q" placeholder="Search..." 
+                        style="width: 160px; padding: 6px 12px 6px 30px; border: 1px solid #eee; border-radius: 20px; font-size: 0.7rem; outline: none; background: #f9f9f9; transition: 0.3s;"
+                        onfocus="this.style.width='220px'; this.style.borderColor='#b89c7d';"
+                        onblur="this.style.width='160px'; this.style.borderColor='#eee';">
+                    <svg style="position: absolute; left: 10px; top: 50%; transform: translateY(-50%); color: #aaa;" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="11" cy="11" r="8"></circle>
+                        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                    </svg>
+                </form>
+
                 <!-- Wishlist Heart -->
-                <a href="{% url 'collections' %}" title="My Collections" style="text-decoration: none; color: #1a1a1a;">
+                <a href="{% url 'collections' %}" title="My Collections" style="text-decoration: none; color: #1a1a1a; display: flex; align-items: center;">
                     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
                         <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l8.84-8.84 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
                     </svg>
@@ -120,7 +133,7 @@
                     <span id="cart-count" class="cart-badge" style="position: absolute; top: -5px; right: -8px; background: #b89c7d; color: white; border-radius: 50%; padding: 2px 6px; font-size: 0.6rem;">{{ cart_count }}</span>
                 </a>
                 
-                <!-- Mobile Hamburger (Only visible on small screens) -->
+                <!-- Mobile Hamburger -->
                 <input type="checkbox" id="menu-check" class="menu-toggle" style="display: none;">
                 <label for="menu-check" class="hamburger" style="margin-left: 10px;">
                     <span></span><span></span><span></span>

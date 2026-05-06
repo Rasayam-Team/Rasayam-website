@@ -418,4 +418,25 @@ def collections_view(request):
     # prefetch_related makes loading the images much faster
     user_collections = request.user.wishlists.prefetch_related('items__product').order_by('-created_at')
     return render(request, 'products/collections.html', {'collections': user_collections})
+
+
+from django.db.models import Q
+from .models import Product
+
+def search_view(request):
+    query = request.GET.get('q')
+    results = []
     
+    if query:
+        # Searches across Name, Seller Tag, and Category Name
+        results = Product.objects.filter(
+            Q(name__icontains=query) | 
+            Q(seller_tag__icontains=query) | 
+            Q(category__name__icontains=query) |
+            Q(description__icontains=query)
+        ).distinct()
+    
+    return render(request, 'products/search_results.html', {
+        'query': query,
+        'results': results
+    })
