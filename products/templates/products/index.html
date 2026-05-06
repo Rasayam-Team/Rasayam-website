@@ -53,29 +53,48 @@
 </section>
 {% endif %}
 
+<!-- REFINED SHOP BY VARIETY SECTION -->
 <section class="category-section container" style="padding: 60px 0;">
-    <h2 style="text-align: center; margin-bottom: 40px; font-family: 'Playfair Display'; font-size: 2.5rem;">Shop By Variety</h2>
-    <div class="category-grid" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px;">
-        
+    <h2 class="playfair" style="text-align: center; margin-bottom: 40px; font-size: 2.2rem; letter-spacing: 1px;">Shop By Variety</h2>
+    
+    <div class="category-grid" style="display: grid; grid-template-columns: repeat(6, 1fr); gap: 12px;">
         {% for cat in categories %}
-            <a href="{% url 'category_detail' cat.slug %}" style="text-decoration: none; color: inherit;">
-                <div class="category-card" style="text-align: center;">
-                    <div class="category-img-box" style="overflow: hidden; background: #f9f9f9; border-radius: 8px;">
-                        {% if cat.image %}
-                            <img src="{{ cat.image.url }}" alt="{{ cat.name }}" style="width: 100%; border-radius: 8px; transition: 0.3s;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
-                        {% else %}
-                            <!-- Fallback: A simple box with the first letter if no image is uploaded -->
-                            <div style="width: 100%; aspect-ratio: 1/1; display: flex; align-items: center; justify-content: center; background: #eee; color: #999;">
-                                <span>No Image</span>
-                            </div>
-                        {% endif %}
+            <a href="{% url 'category_detail' cat.slug %}" class="category-card-link" style="text-decoration: none; display: block; transition: 0.3s;">
+                <div class="category-card" style="position: relative; overflow: hidden; background: #f4f4f4; border-radius: 4px; height: 220px;">
+                    
+                    <!-- Image Layer -->
+                    {% if cat.image %}
+                        <img src="{{ cat.image.url }}" alt="{{ cat.name }}" style="width: 100%; height: 100%; object-fit: cover; transition: 0.5s;">
+                    {% else %}
+                        <div style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; background: #eee; color: #999; font-size: 0.7rem;">
+                            <span>RASAYAM</span>
+                        </div>
+                    {% endif %}
+
+                    <!-- Myntra/Amazon Style Offer Banner -->
+                    <div class="category-banner" style="position: absolute; bottom: 0; left: 0; width: 100%; background: linear-gradient(to top, #fff 80%, rgba(255,255,255,0.9)); padding: 12px 5px; text-align: center; border-top: 1px solid rgba(0,0,0,0.05); transition: 0.3s;">
+                        <p style="margin: 0; font-weight: 700; font-size: 0.7rem; color: #1a1a1a; text-transform: uppercase; letter-spacing: 1px;">{{ cat.name }}</p>
+                        <p style="margin: 2px 0 0 0; font-size: 0.6rem; color: var(--gold); font-weight: 600; letter-spacing: 1px;">SHOP NOW</p>
                     </div>
-                    <p style="margin-top: 15px; font-weight: 600; text-transform: capitalize;">{{ cat.name }}</p>
                 </div>
             </a>
         {% endfor %}
     </div>
 </section>
+
+<style>
+    /* Professional Hover Effects */
+    .category-card-link:hover { transform: translateY(-5px); }
+    .category-card-link:hover img { transform: scale(1.1); }
+    .category-card-link:hover .category-banner { background: var(--gold) !important; }
+    .category-card-link:hover .category-banner p { color: white !important; }
+
+    /* Mobile Responsive: Drops to 2 columns on phones */
+    @media (max-width: 768px) {
+        .category-grid { grid-template-columns: repeat(2, 1fr) !important; gap: 10px !important; }
+        .category-card { height: 180px !important; }
+    }
+</style>
 
 <section class="offers-section container" style="padding-bottom: 60px;">
     <h3>Exclusive Offers</h3>
