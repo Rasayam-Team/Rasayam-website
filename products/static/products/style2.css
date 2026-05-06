@@ -98,8 +98,8 @@ body {
 }
 
 .category-img-box {
-    width: 100%;
-    height: 240px; /* Reduced height for less bulk */
+    width: 50%;
+    height: 450px; /* Reduced height for less bulk */
     background: #f9f9f9;
     overflow: hidden;
     margin-bottom: 15px;
