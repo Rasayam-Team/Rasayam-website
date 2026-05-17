@@ -1,5 +1,6 @@
 import json
 import random
+from urllib import request
 import razorpay
 from django.conf import settings
 from django.shortcuts import render, redirect, get_object_or_404
@@ -379,7 +380,7 @@ def payment_fail(request):
     })
 
 # --- Policy Pages ---
-def privacy(request): return render(request, 'products/privacy.html')
+def privacy(request): return render(request, 'products/privacy_policy.html')
 def refund(request): return render(request, 'products/refund.html')
 def shipping(request): return render(request, 'products/shipping.html')
 def terms(request): return render(request, 'products/terms.html')
@@ -440,3 +441,6 @@ def search_view(request):
         'query': query,
         'results': results
     })
+
+def privacy_policy(request):
+    return render(request, 'products/privacy_policy.html')

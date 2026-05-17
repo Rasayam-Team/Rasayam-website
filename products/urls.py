@@ -8,6 +8,7 @@ urlpatterns = [
     path('shop/', views.shop, name='shop'),
     path('about/', views.about_view, name='about'),
     path('contact/', views.contact, name='contact'),
+    path('privacy-policy/', views.privacy_policy, name='privacy_policy'),
     
     # --- Cart Logic ---
     path('cart/', views.cart, name='cart'),
