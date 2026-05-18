@@ -53,9 +53,9 @@
                         data-name="{{ product.name }}" 
                         data-price="{{ product.price }}" 
                         data-img="{% if product.image %}{{ product.image.url }}{% endif %}">
-                        <a href="{% url 'add_to_cart' product.id %}" class="btn-cart">
+                        <button id="add-btn-category-{{ product.id }}" type="button" class="btn-cart" onclick="addToCartAsync('{{ product.id }}', '', this)">
                             ADD TO SELECTION
-                        </a>
+                        </button>
                     </div>
                 </div>
             </div>

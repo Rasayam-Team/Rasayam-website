@@ -1,7 +1,7 @@
 from django.test import TestCase
 from django.urls import reverse
 from django.contrib.auth.models import User
-from .models import Cart, CartItem, Category, Product
+from .models import Cart, CartItem, Category, Order, OrderItem, Product, Size
 
 class RasayamCoreSystemTests(TestCase):
 
@@ -95,3 +95,39 @@ class RasayamCoreSystemTests(TestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "Minimal Cotton Kurti")
+
+    def test_selected_size_is_saved_and_displayed(self):
+        """Selected sizes should stay attached to cart and order items."""
+        user = User.objects.create_user(username="sized-buyer", password="test-pass-123")
+        size = Size.objects.create(name="M")
+        self.item_without_image.sizes.add(size)
+
+        self.client.force_login(user)
+        self.client.post(
+            reverse('add_to_cart', args=[self.item_without_image.id]),
+            {'selected_size': size.name},
+            HTTP_REFERER=reverse('product_detail', args=[self.item_without_image.id]),
+        )
+
+        cart_item = CartItem.objects.get(cart__user=user, product=self.item_without_image)
+        self.assertEqual(cart_item.selected_size, "M")
+
+        cart_response = self.client.get(reverse('cart'))
+        self.assertContains(cart_response, "Size: M")
+
+        order = Order.objects.create(
+            user=user,
+            total_amount=self.item_without_image.price,
+            status="Paid",
+            is_paid=True,
+        )
+        OrderItem.objects.create(
+            order=order,
+            product_name=self.item_without_image.name,
+            selected_size=cart_item.selected_size,
+            price=self.item_without_image.price,
+            quantity=1,
+        )
+
+        order_response = self.client.get(reverse('order_detail', args=[order.id]))
+        self.assertContains(order_response, "Size: M")

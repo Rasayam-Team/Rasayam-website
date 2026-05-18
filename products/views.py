@@ -18,6 +18,37 @@ from .models import (
     Wishlist, WishlistItem
 )
 
+def get_selected_size_from_request(request, product):
+    selected_size = (
+        request.POST.get('selected_size')
+        or request.GET.get('selected_size')
+        or ''
+    ).strip()
+
+    if selected_size and product.sizes.filter(name=selected_size).exists():
+        return selected_size
+
+    return ''
+
+
+def add_product_to_cart(cart, product, selected_size=''):
+    cart_item = cart.items.filter(
+        product=product,
+        selected_size=selected_size,
+    ).first()
+
+    if cart_item:
+        cart_item.quantity += 1
+        cart_item.save(update_fields=['quantity'])
+        return cart_item, False
+
+    return CartItem.objects.create(
+        cart=cart,
+        product=product,
+        selected_size=selected_size,
+    ), True
+
+
 def get_razorpay_client():
     """Create the Razorpay client only when checkout needs it."""
     if not settings.RAZORPAY_KEY_ID or not settings.RAZORPAY_KEY_SECRET:
@@ -75,7 +106,11 @@ def contact(request):
             subject=subject,
             message=message
         )
-        messages.success(request, "Your inquiry has been sent to the Rasayam concierge.")
+        messages.success(
+            request,
+            "Your inquiry has been sent to the Rasayam concierge.",
+            extra_tags="contact",
+        )
         return redirect('contact') 
 
     return render(request, 'products/contact.html')
@@ -233,6 +268,7 @@ def save_order(request):
         OrderItem.objects.create(
             order=order,
             product_name=item.product.name,
+            selected_size=item.selected_size,
             price=item.product.price,
             quantity=item.quantity,
             image_url=item.product.image.url if item.product.image else ""
@@ -319,14 +355,13 @@ def order_detail_view(request, order_id):
 @login_required
 def add_to_cart(request, product_id):
     product = get_object_or_404(Product, id=product_id)
+    selected_size = get_selected_size_from_request(request, product)
     cart, _ = Cart.objects.get_or_create(user=request.user)
-    cart_item, created = CartItem.objects.get_or_create(cart=cart, product=product)
-    
-    if not created:
-        cart_item.quantity += 1
-        cart_item.save()
+    add_product_to_cart(cart, product, selected_size)
     
     messages.success(request, f"{product.name} added to Selection.")
+    if request.POST.get('buy_now'):
+        return redirect('cart')
     return redirect(request.META.get('HTTP_REFERER', 'shop'))
 
 @login_required
@@ -349,18 +384,16 @@ def remove_from_cart(request, item_id):
 @login_required
 def add_to_cart_ajax(request, product_id):
     product = get_object_or_404(Product, id=product_id)
+    selected_size = get_selected_size_from_request(request, product)
     cart, _ = Cart.objects.get_or_create(user=request.user)
-    cart_item, created = CartItem.objects.get_or_create(cart=cart, product=product)
-    
-    if not created:
-        cart_item.quantity += 1
-        cart_item.save()
+    add_product_to_cart(cart, product, selected_size)
     
     total_count = sum(item.quantity for item in cart.items.all())
     
     return JsonResponse({
         'status': 'success',
         'cart_count': total_count,
+        'selected_size': selected_size,
         'message': f"{product.name} added."
     })
 

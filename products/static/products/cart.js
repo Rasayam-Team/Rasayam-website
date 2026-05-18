@@ -19,15 +19,21 @@ function getCookie(name) {
 }
 
 // 2. Add to Cart (Silent/AJAX)
-function addToCartAsync(productId) {
-    const btn = document.getElementById(`add-btn-${productId}`);
+function addToCartAsync(productId, selectedSize = "", trigger = null) {
+    const btn = trigger || document.getElementById(`add-btn-${productId}`);
     if (btn) {
         btn.innerText = "ADDING...";
         btn.classList.add("is-loading");
         btn.setAttribute("aria-busy", "true");
     }
 
-    fetch(`/add-to-cart-ajax/${productId}/`, {
+    const params = new URLSearchParams();
+    if (selectedSize) {
+        params.set("selected_size", selectedSize);
+    }
+    const queryString = params.toString() ? `?${params.toString()}` : "";
+
+    fetch(`/add-to-cart-ajax/${productId}/${queryString}`, {
         method: 'GET',
         headers: { 'X-Requested-With': 'XMLHttpRequest' }
     })
@@ -58,6 +64,24 @@ function addToCartAsync(productId) {
         }
     });
 }
+
+document.addEventListener("click", function(event) {
+    const scrollLink = event.target.closest(
+        'a[href*="/add-to-cart/"], a[href*="/decrease-item/"], a[href*="/remove-from-cart/"]'
+    );
+
+    if (scrollLink) {
+        sessionStorage.setItem("rasayamScrollY", String(window.scrollY));
+    }
+});
+
+window.addEventListener("load", function() {
+    const savedScrollY = sessionStorage.getItem("rasayamScrollY");
+    if (savedScrollY !== null) {
+        sessionStorage.removeItem("rasayamScrollY");
+        window.scrollTo(0, parseInt(savedScrollY, 10) || 0);
+    }
+});
 
 // 3. WhatsApp Checkout Logic
 function initiateWhatsAppCheckout(cartData, total) {

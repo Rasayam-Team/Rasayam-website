@@ -29,6 +29,9 @@
                         <div>
                             <h3 class="playfair" style="font-size: 1.2rem; margin-bottom: 5px;">{{ item.product.name }}</h3>
                             <p style="color: #888; font-size: 0.8rem; margin-bottom: 10px;">Article No: #RAS-{{ item.product.id }}</p>
+                            {% if item.selected_size %}
+                                <p style="color: #555; font-size: 0.75rem; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 10px;">Size: {{ item.selected_size }}</p>
+                            {% endif %}
                             <p style="color: var(--gold); font-weight: 700;">₹{{ item.product.price|stringformat:"d" }}</p>
                         </div>
                     </div>
@@ -36,7 +39,7 @@
                     <div style="display: flex; align-items: center; gap: 15px; border: 1px solid #eee; padding: 8px 15px;">
                         <a href="{% url 'decrease_cart_item' item.id %}" style="text-decoration: none; color: #000; font-weight: bold;">−</a>
                         <span style="font-size: 0.9rem; min-width: 20px; text-align: center;">{{ item.quantity }}</span>
-                        <a href="{% url 'add_to_cart' item.product.id %}" style="text-decoration: none; color: #000; font-weight: bold;">+</a>
+                        <a href="{% url 'add_to_cart' item.product.id %}{% if item.selected_size %}?selected_size={{ item.selected_size|urlencode }}{% endif %}" style="text-decoration: none; color: #000; font-weight: bold;">+</a>
                     </div>
 
                     <div style="text-align: right;">
@@ -110,9 +113,9 @@
                 <h4 class="playfair" style="font-size: 1rem;">{{ product.name }}</h4>
                 <p class="price" style="color: var(--gold); font-weight: 700; margin: 8px 0;">₹{{ product.price|stringformat:"d" }}</p>
                 
-                <a href="{% url 'add_to_cart' product.id %}" class="btn-cart">
+                <button id="add-btn-cart-rec-{{ product.id }}" type="button" class="btn-cart" onclick="addToCartAsync('{{ product.id }}', '', this)">
                     ADD TO SELECTION
-                </a>
+                </button>
             </div>
         </div>
         {% endfor %}

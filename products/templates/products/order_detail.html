@@ -70,6 +70,9 @@
                     {% endif %}
                     <div style="flex: 1;">
                         <h5 class="playfair" style="font-size: 1.1rem; margin-bottom: 5px;">{{ item.product_name }}</h5>
+                        {% if item.selected_size %}
+                            <p style="font-size: 0.75rem; color: #555; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 4px;">Size: {{ item.selected_size }}</p>
+                        {% endif %}
                         <p style="font-size: 0.8rem; color: #888;">Quantity: {{ item.quantity }}</p>
                     </div>
                     <p style="font-weight: 700;">₹{{ item.price }}</p>

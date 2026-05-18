@@ -94,7 +94,8 @@ class ReviewAdmin(ModelAdmin):
 class OrderItemInline(TabularInline):
     model = OrderItem
     extra = 0
-    readonly_fields = ('price',) 
+    fields = ('product_name', 'selected_size', 'quantity', 'image_url', 'price')
+    readonly_fields = ('selected_size', 'price')
 
 @admin.register(Order)
 class OrderAdmin(ModelAdmin):

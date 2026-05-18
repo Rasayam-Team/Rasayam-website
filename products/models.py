@@ -128,6 +128,7 @@ class Order(models.Model):
 class OrderItem(models.Model):
     order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name='items')
     product_name = models.CharField(max_length=255)
+    selected_size = models.CharField(max_length=20, blank=True, default="")
     price = models.DecimalField(max_digits=10, decimal_places=2)
     quantity = models.PositiveIntegerField(default=1)
     image_url = models.URLField(blank=True)
@@ -149,10 +150,12 @@ class Cart(models.Model):
 class CartItem(models.Model):
     cart = models.ForeignKey(Cart, on_delete=models.CASCADE, related_name='items')
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    selected_size = models.CharField(max_length=20, blank=True, default="")
     quantity = models.PositiveIntegerField(default=1)
 
     def __str__(self):
-        return f"{self.quantity} x {self.product.name}"
+        size_suffix = f" ({self.selected_size})" if self.selected_size else ""
+        return f"{self.quantity} x {self.product.name}{size_suffix}"
 
     @property
     def total_item_price(self):
