@@ -1,6 +1,5 @@
 import json
 import random
-from urllib import request
 import razorpay
 from django.conf import settings
 from django.shortcuts import render, redirect, get_object_or_404
@@ -11,15 +10,19 @@ from django.contrib import messages
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.utils import timezone
+from django.db.models import Q
 from .models import (
     Product, Banner, Category, PromoBox, 
     CustomerProfile, ContactInquiry, Order, OrderItem, Review,
-    Cart, CartItem, Size, ProductImage,
+    Cart, CartItem,
     Wishlist, WishlistItem
 )
 
-# --- Razorpay Client Initialization ---
-razorpay_client = razorpay.Client(auth=(settings.RAZORPAY_KEY_ID, settings.RAZORPAY_KEY_SECRET))
+def get_razorpay_client():
+    """Create the Razorpay client only when checkout needs it."""
+    if not settings.RAZORPAY_KEY_ID or not settings.RAZORPAY_KEY_SECRET:
+        raise ValueError("Razorpay keys are missing. Add RAZORPAY_KEY_ID and RAZORPAY_KEY_SECRET to your environment.")
+    return razorpay.Client(auth=(settings.RAZORPAY_KEY_ID, settings.RAZORPAY_KEY_SECRET))
 
 # --- 1. Main Display Views ---
 
@@ -175,7 +178,7 @@ def verify_otp(request, phone_number):
     
     if request.method == 'POST':
         user_otp = request.POST.get('otp', '').strip()
-        db_otp = profile.otp.strip()
+        db_otp = (profile.otp or '').strip()
 
         if user_otp == db_otp:
             profile.is_verified = True
@@ -212,6 +215,12 @@ def save_order(request):
         return redirect('shop')
 
     total_amount = sum(item.total_item_price for item in cart_items)
+
+    try:
+        razorpay_client = get_razorpay_client()
+    except ValueError as e:
+        messages.error(request, f"Gateway Error: {str(e)}")
+        return redirect('cart')
 
     # 1. Create the Order record (status stays 'Pending')
     order = Order.objects.create(
@@ -272,6 +281,7 @@ def payment_verify(request):
             }
 
             # 1. Security Check: Verify the signature from Razorpay
+            razorpay_client = get_razorpay_client()
             razorpay_client.utility.verify_payment_signature(params_dict)
 
             # 2. Update the Order in your database
@@ -354,6 +364,7 @@ def add_to_cart_ajax(request, product_id):
         'message': f"{product.name} added."
     })
 
+@login_required
 def payment_success(request, order_id):
     """
     Renders the success page after a confirmed transaction.
@@ -396,22 +407,32 @@ def get_wishlists(request):
 @csrf_exempt
 def add_to_wishlist(request):
     """Saves a product to a specific or brand new wishlist"""
-    if request.method == "POST":
+    if request.method != "POST":
+        return JsonResponse({'status': 'error', 'message': 'POST required.'}, status=405)
+
+    try:
         data = json.loads(request.body)
-        product_id = data.get('product_id')
-        wishlist_id = data.get('wishlist_id')
-        new_name = data.get('new_name')
+    except json.JSONDecodeError:
+        return JsonResponse({'status': 'error', 'message': 'Invalid JSON payload.'}, status=400)
 
-        product = get_object_or_404(Product, id=product_id)
+    product_id = data.get('product_id')
+    wishlist_id = data.get('wishlist_id')
+    new_name = data.get('new_name')
 
-        if new_name:
-            # Create a brand new "Instagram-style" collection
-            wishlist, _ = Wishlist.objects.get_or_create(user=request.user, name=new_name)
-        else:
-            wishlist = get_object_or_404(Wishlist, id=wishlist_id, user=request.user)
+    if not product_id:
+        return JsonResponse({'status': 'error', 'message': 'Product is required.'}, status=400)
 
-        WishlistItem.objects.get_or_create(wishlist=wishlist, product=product)
-        return JsonResponse({'status': 'success', 'message': f'Saved to {wishlist.name}'})
+    product = get_object_or_404(Product, id=product_id)
+
+    if new_name:
+        wishlist, _ = Wishlist.objects.get_or_create(user=request.user, name=new_name)
+    elif wishlist_id:
+        wishlist = get_object_or_404(Wishlist, id=wishlist_id, user=request.user)
+    else:
+        return JsonResponse({'status': 'error', 'message': 'Choose a collection or create a new one.'}, status=400)
+
+    WishlistItem.objects.get_or_create(wishlist=wishlist, product=product)
+    return JsonResponse({'status': 'success', 'message': f'Saved to {wishlist.name}'})
 
 @login_required
 def collections_view(request):
@@ -419,10 +440,6 @@ def collections_view(request):
     # prefetch_related makes loading the images much faster
     user_collections = request.user.wishlists.prefetch_related('items__product').order_by('-created_at')
     return render(request, 'products/collections.html', {'collections': user_collections})
-
-
-from django.db.models import Q
-from .models import Product
 
 def search_view(request):
     query = request.GET.get('q')

@@ -32,13 +32,16 @@
                 <div class="img-wrapper" style="overflow: hidden; background: #fcfcfc; aspect-ratio: 3/4; position: relative;">
                     {% if product.image %}
                         <img src="{{ product.image.url }}" alt="{{ product.name }}" style="width: 100%; height: 100%; object-fit: cover; transition: 0.6s ease;">
+                    {% else %}
+                        <div style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; background: #f4f1ec; color: #9a846a; font-size: 0.75rem; letter-spacing: 2px;">
+                            RASAYAM
+                        </div>
                     {% endif %}
                             
-                    <button class="btn-gold" 
-                            style="position: absolute; bottom: 0; left: 0; width: 100%; padding: 12px; font-size: 0.7rem; opacity: 0.9; cursor: pointer; background: #1a1a1a; color: white; border: none;"
-                            onclick="openQuickView('{{ product.name|escapejs }}', {{ product.price }}, '{{ product.description|escapejs }}', '{{ product.image.url }}')">
-                        QUICK VIEW
-                    </button>      
+                    <a href="{% url 'product_detail' product.id %}" class="btn-gold"
+                       style="position: absolute; bottom: 0; left: 0; width: 100%; padding: 12px; font-size: 0.7rem; opacity: 0.9; cursor: pointer; background: #1a1a1a; color: white; border: none; text-align: center; text-decoration: none; box-sizing: border-box;">
+                        VIEW DETAILS
+                    </a>
                 </div>
                         
                 <div class="product-info" style="padding: 20px 0; text-align: left;">
@@ -49,12 +52,11 @@
                         data-id="{{ product.id }}" 
                         data-name="{{ product.name }}" 
                         data-price="{{ product.price }}" 
-                        data-img="{{ product.image.url }}">
-                        <button class="btn-gold" 
-                                style="width: 100%; padding: 12px; background: transparent; border: 1px solid #1a1a1a; cursor: pointer;"
-                                onclick="addToCart('{{ product.id }}', '{{ product.name|escapejs }}', {{ product.price }}, '{{ product.image.url }}')">
+                        data-img="{% if product.image %}{{ product.image.url }}{% endif %}">
+                        <a href="{% url 'add_to_cart' product.id %}" class="btn-gold"
+                           style="display: block; width: 100%; padding: 12px; background: transparent; border: 1px solid #1a1a1a; cursor: pointer; text-align: center; color: #1a1a1a; text-decoration: none; box-sizing: border-box;">
                             ADD TO SELECTION
-                        </button>
+                        </a>
                     </div>
                 </div>
             </div>

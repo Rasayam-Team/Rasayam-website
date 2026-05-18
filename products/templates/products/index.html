@@ -44,7 +44,11 @@
         <div class="swiper-wrapper">
             {% for banner in banners %}
             <div class="swiper-slide">
-                <div class="slide-img" style="background-image: url('{{ banner.image.url }}');"></div>
+                {% if banner.image %}
+                    <div class="slide-img" style="background-image: url('{{ banner.image.url }}');"></div>
+                {% else %}
+                    <div class="slide-img" style="display: flex; align-items: center; justify-content: center; background: #f4f1ec; color: #9a846a; letter-spacing: 2px;">RASAYAM</div>
+                {% endif %}
             </div>
             {% endfor %}
         </div>
@@ -59,7 +63,7 @@
     
     <div class="category-grid" style="display: grid; grid-template-columns: repeat(6, 1fr); gap: 12px;">
         {% for cat in categories %}
-            <a href="{% url 'category_detail' cat.slug %}" class="category-card-link" style="text-decoration: none; display: block; transition: 0.3s;">
+            <a href="{% if cat.slug %}{% url 'category_detail' cat.slug %}{% else %}{% url 'shop' %}{% endif %}" class="category-card-link" style="text-decoration: none; display: block; transition: 0.3s;">
                 <div class="category-card" style="position: relative; overflow: hidden; background: #f4f4f4; border-radius: 4px; height: 220px;">
                     
                     <!-- Image Layer -->

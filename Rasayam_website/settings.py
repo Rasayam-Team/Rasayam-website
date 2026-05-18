@@ -146,6 +146,11 @@ STATIC_ROOT = BASE_DIR / 'staticfiles'
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
+# 🚫 REMOVE OR COMMENT OUT THIS ENTIRE BLOCK BELOW:
+# STATICFILES_DIRS = [
+#     BASE_DIR / 'static',
+# ]
+
 # Cloudinary Credentials
 CLOUDINARY_STORAGE = {
     'CLOUD_NAME': os.environ.get('CLOUDINARY_CLOUD_NAME'),
@@ -153,7 +158,7 @@ CLOUDINARY_STORAGE = {
     'API_SECRET': os.environ.get('CLOUDINARY_API_SECRET')
 }
 
-# Modern Django 4.2+ / 6.0 Storage Configuration
+# Modern Django Storage Configuration
 STORAGES = {
     "default": {
         "BACKEND": "cloudinary_storage.storage.MediaCloudinaryStorage",
@@ -168,7 +173,6 @@ STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.StaticFilesStorage'
 
 # Safe fallback protection rule
 WHITENOISE_MANIFEST_STRICT = False
-
 
 # ==========================================
 # THIRD-PARTY & CUSTOM SETTINGS

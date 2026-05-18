@@ -22,8 +22,12 @@
             {% if product.gallery_images.first %}
                 <img id="mainHeroImage" src="{{ product.gallery_images.first.image.url }}" 
                      style="width: 100%; height: 800px; object-fit: cover; display: block;">
+            {% elif product.image %}
+                <img id="mainHeroImage" src="{{ product.image.url }}" alt="{{ product.name }}" style="width: 100%; height: 800px; object-fit: cover;">
             {% else %}
-                <img src="{{ product.image.url }}" style="width: 100%; height: 800px; object-fit: cover;">
+                <div style="width: 100%; height: 800px; display: flex; align-items: center; justify-content: center; background: #f4f1ec; color: #9a846a; font-size: 0.8rem; letter-spacing: 2px;">
+                    RASAYAM
+                </div>
             {% endif %}
             <div style="position: absolute; top: 20px; left: 20px; background: white; padding: 5px 15px; font-size: 0.7rem; letter-spacing: 2px; font-weight: 700; color: #1a1a1a; box-shadow: 0 5px 15px rgba(0,0,0,0.05);">
                 RASAYAM EXCLUSIVE
