@@ -66,10 +66,9 @@
         <!-- Live Buttons -->
         <div style="display: flex; flex-direction: column; gap: 15px;">
             <!-- Live Add to Cart -->
-            <form action="{% url 'add_to_cart' product.id %}" method="POST">
+            <form action="{% url 'add_to_cart' product.id %}" method="POST" class="cart-action-form">
                 {% csrf_token %}
-                <button type="submit" style="width: 100%; padding: 20px; background: #1a1a1a; color: white; border: none; font-size: 0.8rem; letter-spacing: 2px; font-weight: 700; cursor: pointer; transition: 0.4s;"
-                        onmouseover="this.style.background='#333'" onmouseout="this.style.background='#1a1a1a'">
+                <button type="submit" class="btn-cart">
                     ADD TO SELECTION
                 </button>
             </form>

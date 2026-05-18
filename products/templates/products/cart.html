@@ -110,10 +110,8 @@
                 <h4 class="playfair" style="font-size: 1rem;">{{ product.name }}</h4>
                 <p class="price" style="color: var(--gold); font-weight: 700; margin: 8px 0;">₹{{ product.price|stringformat:"d" }}</p>
                 
-                <a href="{% url 'add_to_cart' product.id %}" style="text-decoration: none;">
-                    <button class="btn-outline" style="width: 100%; padding: 10px; border: 1px solid var(--gold); background: none; color: var(--gold); cursor: pointer;">
-                        Add to Selection
-                    </button>
+                <a href="{% url 'add_to_cart' product.id %}" class="btn-cart">
+                    ADD TO SELECTION
                 </a>
             </div>
         </div>

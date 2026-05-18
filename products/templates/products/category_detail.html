@@ -53,8 +53,7 @@
                         data-name="{{ product.name }}" 
                         data-price="{{ product.price }}" 
                         data-img="{% if product.image %}{{ product.image.url }}{% endif %}">
-                        <a href="{% url 'add_to_cart' product.id %}" class="btn-gold"
-                           style="display: block; width: 100%; padding: 12px; background: transparent; border: 1px solid #1a1a1a; cursor: pointer; text-align: center; color: #1a1a1a; text-decoration: none; box-sizing: border-box;">
+                        <a href="{% url 'add_to_cart' product.id %}" class="btn-cart">
                             ADD TO SELECTION
                         </a>
                     </div>

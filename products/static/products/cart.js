@@ -23,7 +23,8 @@ function addToCartAsync(productId) {
     const btn = document.getElementById(`add-btn-${productId}`);
     if (btn) {
         btn.innerText = "ADDING...";
-        btn.style.opacity = "0.7";
+        btn.classList.add("is-loading");
+        btn.setAttribute("aria-busy", "true");
     }
 
     fetch(`/add-to-cart-ajax/${productId}/`, {
@@ -39,9 +40,10 @@ function addToCartAsync(productId) {
 
             // Transform Button to "View Bag" Link
             if (btn) {
-                btn.innerText = "IN SELECTION — VIEW BAG";
-                btn.style.background = "#D4AF37"; // Rasayam Gold
-                btn.style.opacity = "1";
+                btn.innerText = "IN SELECTION - VIEW BAG";
+                btn.classList.remove("is-loading");
+                btn.classList.add("is-in-cart");
+                btn.removeAttribute("aria-busy");
                 btn.disabled = false;
                 btn.onclick = () => window.location.href = "/cart/";
             }
@@ -49,7 +51,11 @@ function addToCartAsync(productId) {
     })
     .catch(error => {
         console.error('Cart Error:', error);
-        if (btn) btn.innerText = "ADD TO SELECTION";
+        if (btn) {
+            btn.innerText = "ADD TO SELECTION";
+            btn.classList.remove("is-loading");
+            btn.removeAttribute("aria-busy");
+        }
     });
 }
 
