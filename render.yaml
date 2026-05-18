@@ -1,0 +1,9 @@
+services:
+  - type: web
+    name: rasayam-website
+    env: python
+    buildCommand: "pip install -r requirements.txt && python manage.py collectstatic --noinput --clear"
+    startCommand: "gunicorn Rasayam_website.wsgi:application"
+    envVars:
+      - key: DEBUG
+        value: "False"
