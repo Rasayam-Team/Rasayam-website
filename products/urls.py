@@ -50,7 +50,6 @@ urlpatterns = [
     path('payment-fail/', views.payment_fail, name='payment_fail'),
 
     # --- Legal & Policy Pages ---
-    path('privacy/', views.privacy, name='privacy'),
     path('refund/', views.refund, name='refund'),
     path('shipping/', views.shipping, name='shipping'),
     path('terms/', views.terms, name='terms'),

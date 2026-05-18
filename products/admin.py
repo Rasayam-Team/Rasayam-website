@@ -7,7 +7,7 @@ from unfold.contrib.import_export.forms import ExportForm, ImportForm
 from .models import (
     CustomerProfile, Product, Banner, Category, 
     Order, OrderItem, Review, PromoBox, ContactInquiry,
-    Size, ProductImage  # Added these
+    Size, ProductImage, Wishlist, WishlistItem, Cart  # Added Cart and Wishlist models
 )
 
 # --- 1. Product Inlines & Size Management ---
@@ -86,8 +86,13 @@ class ContactInquiryAdmin(ModelAdmin):
 
 @admin.register(Review)
 class ReviewAdmin(ModelAdmin):
-    list_display = ('user', 'product', 'rating', 'created_at')
-    list_filter = ('rating', 'created_at')
+    list_display = ('user', 'product', 'rating', 'is_verified', 'comment_preview', 'created_at')
+    list_filter = ('rating', 'is_verified', 'created_at')
+    search_fields = ('user__username', 'product__name')
+    
+    def comment_preview(self, obj):
+        return obj.comment[:50] + "..." if len(obj.comment) > 50 else obj.comment
+    comment_preview.short_description = "Comment Preview"
 
 # --- 5. Orders & Payments ---
 
@@ -107,3 +112,48 @@ class OrderAdmin(ModelAdmin):
     
     inlines = [OrderItemInline]
     fixed_submit_bar = True
+
+
+# --- 6. Cart & Wishlist Management ---
+
+@admin.register(Cart)
+class CartAdmin(ModelAdmin):
+    list_display = ('user', 'total_items_count', 'total_price', 'updated_at')
+    search_fields = ('user__username',)
+    readonly_fields = ('created_at', 'updated_at')
+    
+    def total_items_count(self, obj):
+        return sum(item.quantity for item in obj.items.all())
+    total_items_count.short_description = "Total Items"
+    
+    def total_price(self, obj):
+        return f"₹{obj.total_price:.2f}"
+    total_price.short_description = "Total Price"
+
+
+@admin.register(Wishlist)
+class WishlistAdmin(ModelAdmin):
+    list_display = ('user', 'name', 'items_count', 'created_at')
+    search_fields = ('user__username', 'name')
+    list_filter = ('created_at',)
+    
+    def items_count(self, obj):
+        return obj.items.count()
+    items_count.short_description = "Items in Wishlist"
+
+
+class WishlistItemInline(TabularInline):
+    model = WishlistItem
+    extra = 1
+    fields = ('product',)
+
+
+@admin.register(WishlistItem)
+class WishlistItemAdmin(ModelAdmin):
+    list_display = ('wishlist', 'product', 'created_at')
+    search_fields = ('wishlist__name', 'product__name')
+    list_filter = ('wishlist__created_at',)
+    
+    def created_at(self, obj):
+        return obj.wishlist.created_at
+    created_at.short_description = "Added to Wishlist"

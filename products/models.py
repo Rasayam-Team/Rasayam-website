@@ -111,9 +111,17 @@ class Review(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
 class Order(models.Model):
+    STATUS_CHOICES = [
+        ('Pending', 'Pending'),
+        ('Paid', 'Paid'),
+        ('Processing', 'Processing'),
+        ('Shipped', 'Shipped'),
+        ('Delivered', 'Delivered'),
+        ('Cancelled', 'Cancelled'),
+    ]
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='orders')
     created_at = models.DateTimeField(auto_now_add=True)
-    status = models.CharField(max_length=20, default='Pending')
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='Pending')
     total_amount = models.DecimalField(max_digits=10, decimal_places=2)
 
     # --- RAZORPAY PAYMENT FIELDS ---
@@ -132,6 +140,9 @@ class OrderItem(models.Model):
     price = models.DecimalField(max_digits=10, decimal_places=2)
     quantity = models.PositiveIntegerField(default=1)
     image_url = models.URLField(blank=True)
+
+    def __str__(self):
+        return f"{self.quantity}x {self.product_name} - Order {self.order.id}"
 
 # --- 4. Cart Logic ---
 
@@ -152,6 +163,7 @@ class CartItem(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     selected_size = models.CharField(max_length=20, blank=True, default="")
     quantity = models.PositiveIntegerField(default=1)
+    price = models.DecimalField(max_digits=10, decimal_places=2, default=0)
 
     def __str__(self):
         size_suffix = f" ({self.selected_size})" if self.selected_size else ""
@@ -159,7 +171,9 @@ class CartItem(models.Model):
 
     @property
     def total_item_price(self):
-        return self.product.price * self.quantity
+        # Use stored price if available, otherwise fall back to product price
+        price = self.price if self.price > 0 else self.product.price
+        return price * self.quantity
     
 
 class Wishlist(models.Model):

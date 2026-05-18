@@ -1,6 +1,7 @@
 import json
 import random
 import razorpay
+from datetime import timedelta
 from django.conf import settings
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import login, logout
@@ -46,6 +47,7 @@ def add_product_to_cart(cart, product, selected_size=''):
         cart=cart,
         product=product,
         selected_size=selected_size,
+        price=product.price,  # Store product price at time of adding to cart
     ), True
 
 
@@ -215,6 +217,13 @@ def verify_otp(request, phone_number):
         user_otp = request.POST.get('otp', '').strip()
         db_otp = (profile.otp or '').strip()
 
+        # Check OTP expiry (5 minutes)
+        if profile.otp_created_at:
+            elapsed = timezone.now() - profile.otp_created_at
+            if elapsed > timedelta(minutes=5):
+                messages.error(request, "OTP expired. Request a new one.")
+                return redirect('login')
+
         if user_otp == db_otp:
             profile.is_verified = True
             profile.save()
@@ -265,11 +274,17 @@ def save_order(request):
     )
 
     for item in cart_items:
+        # Validate size is still available
+        if item.selected_size and not item.product.sizes.filter(name=item.selected_size).exists():
+            messages.error(request, f"Size {item.selected_size} is no longer available. Please update your selection.")
+            order.delete()
+            return redirect('cart')
+        
         OrderItem.objects.create(
             order=order,
             product_name=item.product.name,
             selected_size=item.selected_size,
-            price=item.product.price,
+            price=item.price if item.price > 0 else item.product.price,
             quantity=item.quantity,
             image_url=item.product.image.url if item.product.image else ""
         )
@@ -300,7 +315,6 @@ def save_order(request):
         return redirect('cart')
     
 
-@csrf_exempt
 @login_required
 def payment_verify(request):
     """Verifies Razorpay Signature and finalizes transaction"""
@@ -328,9 +342,19 @@ def payment_verify(request):
             order.status = 'Paid'
             order.save()
 
-            # 3. SUCCESS: Clear the User's Cart now
-            # This is the crucial fix. It only runs if the payment is verified.
-            CartItem.objects.filter(cart__user=request.user).delete()
+            # 3. SUCCESS: Clear only the items from this completed order
+            # Get the user's cart
+            cart = Cart.objects.get(user=request.user)
+            # Delete only cart items that were in this order
+            cart_item_ids = []
+            for order_item in order.items.all():
+                cart_item_ids.extend(
+                    cart.items.filter(
+                        product__name=order_item.product_name,
+                        selected_size=order_item.selected_size
+                    ).values_list('id', flat=True)
+                )
+            CartItem.objects.filter(id__in=cart_item_ids).delete()
 
             messages.success(request, "Payment verified! Your order is being prepared.")
             return redirect('payment_success', order_id=order.id)
@@ -491,6 +515,3 @@ def search_view(request):
         'query': query,
         'results': results
     })
-
-def privacy_policy(request):
-    return render(request, 'products/privacy_policy.html')
