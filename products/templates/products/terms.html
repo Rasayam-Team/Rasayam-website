@@ -2,44 +2,252 @@
 {% load static %}
 
 {% block content %}
+
 <style>
-    .policy-page-container { background-color: #fff; color: var(--royal); padding-bottom: 80px; }
-    .policy-content { max-width: 800px; margin: 0 auto; padding: 50px; background: #fcfcfc; border: 1px solid var(--border); box-shadow: 0 15px 40px rgba(0,0,0,0.02); }
-    .policy-section { margin-bottom: 40px; }
-    .policy-section h3 { font-family: 'Playfair Display', serif; font-size: 1.5rem; color: var(--royal); margin-bottom: 15px; border-bottom: 1px solid var(--gold); padding-bottom: 10px; display: inline-block; }
-    .policy-section p { font-family: 'Poppins', sans-serif; color: #555; line-height: 1.8; font-size: 0.95rem; }
+    .policy-container {
+        max-width: 1100px;
+        margin: 60px auto;
+        padding: 40px;
+        background: #fff;
+        border-radius: 12px;
+        line-height: 1.9;
+    }
+
+    .policy-title {
+        font-size: 42px;
+        font-weight: 700;
+        margin-bottom: 10px;
+        color: #111;
+    }
+
+    .policy-date {
+        color: #777;
+        margin-bottom: 40px;
+        font-size: 15px;
+    }
+
+    .policy-section {
+        margin-bottom: 40px;
+    }
+
+    .policy-section h2 {
+        font-size: 28px;
+        margin-bottom: 18px;
+        color: #111;
+        font-weight: 600;
+    }
+
+    .policy-section p {
+        font-size: 16px;
+        color: #444;
+        margin-bottom: 18px;
+    }
+
+    .policy-section ul {
+        padding-left: 20px;
+    }
+
+    .policy-section li {
+        margin-bottom: 12px;
+        color: #444;
+    }
+
+    @media(max-width:768px) {
+        .policy-container {
+            padding: 25px;
+            margin: 30px 15px;
+        }
+
+        .policy-title {
+            font-size: 32px;
+        }
+
+        .policy-section h2 {
+            font-size: 24px;
+        }
+    }
 </style>
 
-<div class="policy-page-container">
-    <header class="text-center" style="padding: 60px 0 40px;">
-        <div class="container">
-            <h2 class="playfair" style="font-size: 3rem; margin-bottom: 10px;">Terms of Use</h2>
-            <p style="letter-spacing: 2px; font-size: 0.75rem; text-transform: uppercase; color: #999;">The legal framework of our boutique</p>
-        </div>
-    </header>
+<div class="policy-container">
 
-    <div class="container">
-        <div class="policy-content">
-            <div class="policy-section">
-                <h3>Agreement to Terms</h3>
-                <p>By accessing the RASAYAM digital atelier, you agree to be bound by these Terms of Use. If you do not agree, please refrain from using our services.</p>
-            </div>
+    <section class="policy-container">
+    <div class="policy-content">
 
-            <div class="policy-section">
-                <h3>Intellectual Property</h3>
-                <p>All content, including ethnic wear designs, kurti patterns, brand imagery, and text, is the exclusive property of RASAYAM and is protected by Indian copyright laws.</p>
-            </div>
+        <h1 class="policy-title">Terms & Conditions</h1>
 
-            <div class="policy-section">
-                <h3>Product Accuracy</h3>
-                <p>While we strive for color accuracy in our product photography, slight variations may occur due to screen settings and the handcrafted nature of our premium fabrics.</p>
-            </div>
+        <p class="policy-date">Last Updated: May 2026</p>
 
-            <div class="policy-section">
-                <h3>Governing Law</h3>
-                <p>These terms shall be governed by and construed in accordance with the laws of India. Any disputes arising shall be subject to the exclusive jurisdiction of the courts in [Your City].</p>
-            </div>
-        </div>
+        <section class="policy-section">
+            <p>
+                Welcome to Rasayam. By accessing, browsing, or using our website, purchasing products, or interacting with our services, you agree to comply with and be bound by the following Terms & Conditions. Please read them carefully before using our platform.
+            </p>
+
+            <p>
+                These Terms govern your use of the Rasayam website, products, services, and all related interactions conducted through our platform.
+            </p>
+        </section>
+
+        <section class="policy-section">
+            <h2>1. General</h2>
+
+            <p>
+                By using this website, you confirm that all information provided by you is accurate, current, and complete.
+            </p>
+
+            <p>
+                Rasayam reserves the right to modify, update, suspend, or discontinue any part of the website, products, pricing, policies, or services at any time without prior notice.
+            </p>
+
+            <p>
+                Continued use of the website after any changes constitutes acceptance of the revised Terms & Conditions.
+            </p>
+        </section>
+
+        <section class="policy-section">
+            <h2>2. Products & Pricing</h2>
+
+            <p>
+                All products displayed on our website are subject to availability.
+            </p>
+
+            <p>
+                We make every effort to display product colors, designs, sizes, and details as accurately as possible. However, slight variations may occur due to photography, lighting conditions, device settings, or screen resolutions.
+            </p>
+
+            <p>
+                All prices are listed in Indian Rupees (INR ₹) and are subject to change without prior notice.
+            </p>
+
+            <p>
+                Promotional offers, discounts, and sale campaigns may be time-limited and subject to separate terms.
+            </p>
+        </section>
+
+        <section class="policy-section">
+            <h2>3. Orders & Payments</h2>
+
+            <p>
+                Orders are confirmed only after successful payment authorization or Cash on Delivery confirmation, where applicable.
+            </p>
+
+            <p>
+                Payments are securely processed through trusted payment partners including Razorpay, PayU, Cashfree, PhonePe, Paytm, and Stripe.
+            </p>
+
+            <p>
+                Rasayam reserves the right to cancel or refuse any order due to stock unavailability, pricing errors, suspected fraudulent activity, or payment-related concerns.
+            </p>
+        </section>
+
+        <section class="policy-section">
+            <h2>4. Shipping & Delivery</h2>
+
+            <p>
+                Delivery timelines are estimated and may vary depending on location, logistics conditions, public holidays, weather conditions, or unforeseen circumstances.
+            </p>
+
+            <p>
+                Orders may be shipped through logistics partners including Delhivery, Blue Dart, DTDC, Ekart, Xpressbees, and India Post.
+            </p>
+
+            <p>
+                Rasayam shall not be held responsible for delivery delays caused by courier partners, natural events, strikes, or force majeure situations beyond our control.
+            </p>
+        </section>
+
+        <section class="policy-section">
+            <h2>5. Returns & Exchanges</h2>
+
+            <p>
+                Returns and exchanges are governed by our Return Policy.
+            </p>
+
+            <p>
+                Returned items must be unused, unwashed, undamaged, and returned in their original packaging with tags intact.
+            </p>
+
+            <p>
+                Products purchased during clearance sales, promotional offers, or customized orders may not qualify for returns or exchanges unless received in defective condition.
+            </p>
+        </section>
+
+        <section class="policy-section">
+            <h2>6. Intellectual Property</h2>
+
+            <p>
+                All website content, including trademarks, logos, product photographs, graphics, text, layouts, branding elements, and designs associated with Rasayam are the exclusive intellectual property of Rasayam.
+            </p>
+
+            <p>
+                Unauthorized reproduction, copying, distribution, modification, or commercial use of any material is strictly prohibited without prior written consent.
+            </p>
+        </section>
+
+        <section class="policy-section">
+            <h2>7. User Conduct</h2>
+
+            <p>You agree not to:</p>
+
+            <ul>
+                <li>Use the website for unlawful or fraudulent purposes</li>
+                <li>Attempt unauthorized access to systems or databases</li>
+                <li>Upload harmful software, malware, or disruptive code</li>
+                <li>Abuse promotions, discounts, referral systems, or payment processes</li>
+                <li>Interfere with the website's security or functionality</li>
+            </ul>
+        </section>
+
+        <section class="policy-section">
+            <h2>8. Limitation of Liability</h2>
+
+            <p>
+                To the fullest extent permitted by law, Rasayam shall not be liable for indirect, incidental, consequential, or special damages arising from the use of our website, products, or services.
+            </p>
+
+            <p>
+                Users access and use the website at their own discretion and risk.
+            </p>
+        </section>
+
+        <section class="policy-section">
+            <h2>9. Privacy</h2>
+
+            <p>
+                Your use of this website is also governed by our Privacy Policy.
+            </p>
+        </section>
+
+        <section class="policy-section">
+            <h2>10. Governing Law</h2>
+
+            <p>
+                These Terms & Conditions shall be governed and interpreted in accordance with the laws of India.
+            </p>
+
+            <p>
+                Any disputes arising in connection with these Terms shall be subject to the jurisdiction of the competent courts located in Agra, India.
+            </p>
+        </section>
+
+        <section class="policy-section">
+            <h2>11. Contact Us</h2>
+
+            <p>
+                For questions, concerns, or requests regarding these Terms & Conditions, please contact:
+            </p>
+
+            <p>
+                <strong>Rasayam</strong><br>
+                Email: admin@rasayamglobal.com<br>
+                Phone: +91 8923061123<br>
+                Address: Agra, India
+            </p>
+        </section>
+
     </div>
+</section>
+    </div>
+
 </div>
+
 {% endblock %}
