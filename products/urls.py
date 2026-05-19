@@ -56,4 +56,5 @@ urlpatterns = [
     path('shipping/', views.shipping, name='shipping'),
     path('shipping-policy/', views.shipping_policy, name='shipping_policy'),
     path('terms/', views.terms, name='terms'),
+    path('faq/', views.faq, name='faq'),
 ]
