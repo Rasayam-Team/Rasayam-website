@@ -95,6 +95,9 @@ def about_view(request):
     reviews = Review.objects.filter(is_verified=True).order_by('-id')
     return render(request, 'products/about.html', {'reviews': reviews})
 
+def about_us(request):
+    return render(request, 'products/about_us.html')
+
 def contact(request):
     if request.method == 'POST':
         full_name = request.POST.get('full_name')
