@@ -1,0 +1,275 @@
+{% extends 'products/base.html' %}
+{% load static %}
+
+{% block content %}
+
+<style>
+    .policy-container {
+        max-width: 1100px;
+        margin: 60px auto;
+        padding: 40px;
+        background: #fff;
+        border-radius: 12px;
+        line-height: 1.9;
+    }
+
+    .policy-title {
+        font-size: 42px;
+        font-weight: 700;
+        margin-bottom: 10px;
+        color: #111;
+    }
+
+    .policy-date {
+        color: #777;
+        margin-bottom: 40px;
+        font-size: 15px;
+    }
+
+    .policy-section {
+        margin-bottom: 40px;
+    }
+
+    .policy-section h2 {
+        font-size: 28px;
+        margin-bottom: 18px;
+        color: #111;
+        font-weight: 600;
+    }
+
+    .policy-section p {
+        font-size: 16px;
+        color: #444;
+        margin-bottom: 18px;
+    }
+
+    .policy-section ul {
+        padding-left: 20px;
+    }
+
+    .policy-section li {
+        margin-bottom: 12px;
+        color: #444;
+    }
+
+    @media(max-width:768px) {
+        .policy-container {
+            padding: 25px;
+            margin: 30px 15px;
+        }
+
+        .policy-title {
+            font-size: 32px;
+        }
+
+        .policy-section h2 {
+            font-size: 24px;
+        }
+    }
+</style>
+
+<div class="policy-container">
+
+    <section class="policy-container">
+    <div class="policy-content">
+
+        <h1 class="policy-title">Shipping Policy</h1>
+
+        <p class="policy-date">Effective Date: May 2026</p>
+
+        <section class="policy-section">
+
+            <p>
+                At Rasayam, we are committed to delivering your orders safely, efficiently, and within reasonable timelines. This Shipping Policy outlines our shipping process, estimated delivery timelines, and important shipping-related information.
+            </p>
+
+        </section>
+
+        <section class="policy-section">
+
+            <h2>1. Order Processing</h2>
+
+            <p>
+                Orders are generally processed within 1–2 business days after successful payment confirmation.
+            </p>
+
+            <p>
+                Orders placed on Sundays or public holidays will be processed on the next working business day.
+            </p>
+
+            <p>
+                During festive seasons, promotional sales, product launches, or periods of high order volume, processing timelines may be slightly extended.
+            </p>
+
+        </section>
+
+        <section class="policy-section">
+
+            <h2>2. Estimated Delivery Timelines</h2>
+
+            <p>
+                Estimated delivery timelines may vary depending on location and courier serviceability:
+            </p>
+
+            <ul>
+                <li>Metro Cities: 2–5 business days</li>
+                <li>Tier 2 / Tier 3 Cities: 4–8 business days</li>
+                <li>Remote / Rural Locations: 5–10 business days</li>
+            </ul>
+
+            <p>
+                Delivery timelines are estimates only and may vary due to courier operations, weather conditions, public holidays, regional restrictions, strikes, or unforeseen circumstances beyond our control.
+            </p>
+
+        </section>
+
+        <section class="policy-section">
+
+            <h2>3. Shipping Partners</h2>
+
+            <p>
+                Rasayam may ship orders through trusted logistics and courier partners including:
+            </p>
+
+            <ul>
+                <li>Delhivery</li>
+                <li>Blue Dart</li>
+                <li>DTDC</li>
+                <li>Ekart</li>
+                <li>Xpressbees</li>
+                <li>India Post</li>
+            </ul>
+
+            <p>
+                Courier partner selection depends on delivery location, serviceability, operational availability, and shipping efficiency.
+            </p>
+
+        </section>
+
+        <section class="policy-section">
+
+            <h2>4. Shipping Charges</h2>
+
+            <p>
+                Free Shipping may be offered on eligible orders, promotional campaigns, or above specified cart values.
+            </p>
+
+            <p>
+                Standard shipping charges, if applicable, will be clearly displayed during checkout prior to payment confirmation.
+            </p>
+
+        </section>
+
+        <section class="policy-section">
+
+            <h2>5. Order Tracking</h2>
+
+            <p>
+                Once an order has been shipped, customers may receive:
+            </p>
+
+            <ul>
+                <li>Order confirmation email</li>
+                <li>Shipment tracking number / AWB number</li>
+                <li>Tracking link via Email, SMS, or WhatsApp (where applicable)</li>
+            </ul>
+
+            <p>
+                Customers may track their shipment directly through the respective courier partner website.
+            </p>
+
+        </section>
+
+        <section class="policy-section">
+
+            <h2>6. Delivery Attempts</h2>
+
+            <p>
+                Courier partners may make multiple delivery attempts before returning the shipment.
+            </p>
+
+            <p>
+                If delivery fails due to incorrect address details, recipient unavailability, or unsuccessful contact attempts, the shipment may be returned to Rasayam.
+            </p>
+
+            <p>
+                Additional re-shipping charges may apply in such situations.
+            </p>
+
+        </section>
+
+        <section class="policy-section">
+
+            <h2>7. Address Accuracy</h2>
+
+            <p>
+                Customers are requested to provide accurate shipping information including:
+            </p>
+
+            <ul>
+                <li>Full Name</li>
+                <li>Complete Delivery Address</li>
+                <li>Nearby Landmark (if required)</li>
+                <li>Mobile Number / Alternate Contact Number</li>
+                <li>Correct PIN Code</li>
+            </ul>
+
+            <p>
+                Rasayam shall not be responsible for delays or failed deliveries resulting from inaccurate or incomplete shipping information provided by customers.
+            </p>
+
+        </section>
+
+        <section class="policy-section">
+
+            <h2>8. Damaged or Tampered Packages</h2>
+
+            <p>
+                If a package appears damaged, opened, or tampered with at the time of delivery, customers are advised to:
+            </p>
+
+            <ul>
+                <li>Refuse delivery where possible</li>
+                <li>Record clear photos or videos immediately</li>
+                <li>Contact Rasayam within 48 hours of delivery</li>
+            </ul>
+
+            <p>
+                Shipping-related concerns may be reported to:
+                <br><br>
+                <strong>Email:</strong> admin@rasayamglobal.com
+            </p>
+
+        </section>
+
+        <section class="policy-section">
+
+            <h2>9. Contact Us</h2>
+
+            <p>
+                For shipping-related questions, assistance, or support, please contact:
+            </p>
+
+            <p>
+                <strong>Rasayam</strong><br>
+                Email: admin@rasayamglobal.com<br>
+                Instagram: @rasayam_official
+            </p>
+
+        </section>
+
+        <section class="policy-section">
+
+            <p>
+                Thank you for shopping with Rasayam.
+            </p>
+
+        </section>
+
+    </div>
+</section>
+    </div>
+
+</div>
+
+{% endblock %}
