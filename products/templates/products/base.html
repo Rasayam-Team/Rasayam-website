@@ -132,12 +132,7 @@
                 <a href="{% url 'index' %}" class="mobile-logo">RASAYAM</a>
 
                 <div class="mobile-actions">
-                    <a href="#mobile-search" class="mobile-action-link" aria-label="Search">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7">
-                            <circle cx="11" cy="11" r="8"></circle>
-                            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-                        </svg>
-                    </a>
+                    <a href="{% url 'shop' %}" class="mobile-shop-link">Shop</a>
 
                     {% if user.is_authenticated %}
                         <a href="{% url 'profile' %}" class="mobile-action-link" aria-label="Profile">
