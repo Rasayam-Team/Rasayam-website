@@ -6,28 +6,78 @@
     /* 1. THE STATIC HERO (The local image with text) */
     .static-hero {
         width: 100%;
-        height: 80vh;
-        /* Path to your local image from your drive */
         background-image: url('{% static "products/image/hero-bg.png" %}');
         background-size: cover;
-        background-position: top center;
+        background-position: center;
         display: flex;
         align-items: center;
         justify-content: center;
         text-align: center;
         color: white;
+        position: relative;
+        /* Responsive height: Desktop 85vh, scales down responsively */
+        max-height: 85vh;
+        min-height: 500px;
+        aspect-ratio: auto;
     }
-    .hero-text h1 { font-family: 'Playfair Display'; font-size: 4rem; margin-bottom: 10px; }
-    .hero-text p { letter-spacing: 5px; text-transform: uppercase; font-size: 0.9rem; }
-    .btn-shop { 
-        display: inline-block; margin-top: 20px; padding: 12px 35px; 
-        background: white; color: black; text-decoration: none; font-weight: 600; 
+    .hero-text h1 {
+        font-family: 'Playfair Display';
+        /* Scales from 1.8rem at 320px to 4rem at 1024px+ */
+        font-size: clamp(1.8rem, 7vw, 4rem);
+        margin-bottom: 10px;
+        line-height: 1.1;
+    }
+    .hero-text p {
+        letter-spacing: 5px;
+        text-transform: uppercase;
+        /* Scales from 0.7rem at 320px to 0.9rem at 768px+ */
+        font-size: clamp(0.7rem, 2vw, 0.9rem);
+        margin-bottom: clamp(8px, 2vh, 25px);
+    }
+    .btn-shop {
+        display: inline-block;
+        margin-top: clamp(12px, 3vh, 20px);
+        padding: clamp(10px, 1.5vh, 12px) clamp(24px, 5vw, 35px);
+        background: white;
+        color: black;
+        text-decoration: none;
+        font-weight: 600;
+        min-height: 44px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        transition: 0.3s;
+    }
+    .btn-shop:hover {
+        background: #f5f5f5;
+        transform: translateY(-2px);
     }
 
     /* 2. THE SCROLLING BANNERS (Pure images, no text) */
-    .banner-scroller { width: 100%; height: 60vh; padding: 40px 0; background: #fff; }
-    .swiper { width: 90%; height: 100%; border-radius: 4px; }
-    .slide-img { width: 100%; height: 100%; background-size: cover; background-position: center; }
+    .banner-scroller {
+        width: 100%;
+        padding: clamp(20px, 4vh, 40px) 0;
+        background: #fff;
+        /* Responsive height with aspect ratio */
+        min-height: 280px;
+        max-height: 70vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .swiper {
+        width: clamp(85%, 95vw - 20px, 90%);
+        height: 100%;
+        max-height: 600px;
+        border-radius: 4px;
+        aspect-ratio: 16 / 9;
+    }
+    .slide-img {
+        width: 100%;
+        height: 100%;
+        background-size: cover;
+        background-position: center;
+    }
 </style>
 
 <section class="static-hero">
