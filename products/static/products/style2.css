@@ -404,10 +404,10 @@ body {
     text-align: center;
     position: relative;
     color: #fff;
-    /* Responsive hero height */
-    max-height: 85vh;
-    min-height: 500px;
-    padding: clamp(30px, 5vh, 60px) clamp(14px, 3vw, 40px);
+    /* Mobile-first: 50vh on mobile, up to 80vh on desktop */
+    height: 50vh;
+    max-height: 80vh;
+    padding: clamp(20px, 3vh, 40px) clamp(12px, 3vw, 40px);
 }
 
 .static-hero::before {
@@ -532,9 +532,8 @@ a.btn-cart {
     }
 
     .static-hero {
-        max-height: calc(100vh - 160px);
-        min-height: 320px;
-        padding: 20px 12px;
+        height: 45vh;
+        padding: 18px 12px;
     }
 
     .hero-text h1 {
@@ -553,14 +552,11 @@ a.btn-cart {
     }
 
     .banner-scroller {
-        min-height: 240px;
-        max-height: 50vh;
-        padding: 15px 0;
+        padding: 12px 0;
     }
 
     .swiper {
         width: 90%;
-        max-height: 400px;
     }
 
     .swiper-pagination {
@@ -577,9 +573,8 @@ a.btn-cart {
     }
 
     .static-hero {
-        max-height: calc(100vh - 140px);
-        min-height: 360px;
-        padding: 25px 16px;
+        height: 48vh;
+        padding: 22px 16px;
     }
 
     .hero-text h1 {
@@ -598,14 +593,11 @@ a.btn-cart {
     }
 
     .banner-scroller {
-        min-height: 260px;
-        max-height: 55vh;
-        padding: 18px 0;
+        padding: 16px 0;
     }
 
     .swiper {
         width: 92%;
-        max-height: 450px;
     }
 
     .swiper-pagination {
@@ -622,9 +614,9 @@ a.btn-cart {
     }
 
     .static-hero {
-        max-height: 75vh;
-        min-height: 420px;
-        padding: 30px 20px;
+        height: 55vh;
+        max-height: 70vh;
+        padding: 28px 20px;
     }
 
     .hero-text h1 {
@@ -646,19 +638,33 @@ a.btn-cart {
     }
 
     .banner-scroller {
-        min-height: 320px;
-        max-height: 65vh;
-        padding: 25px 0;
+        padding: 22px 0;
     }
 
     .swiper {
         width: 93%;
-        max-height: 500px;
-        aspect-ratio: 16 / 9;
     }
 
     .swiper-pagination {
         bottom: 12px !important;
+    }
+}
+
+/* Desktop: 769px and above */
+@media (min-width: 769px) {
+    .static-hero {
+        height: 70vh;
+        max-height: 90vh;
+        padding: 40px 40px;
+    }
+
+    .banner-scroller {
+        padding: 30px 0;
+    }
+
+    .swiper {
+        width: 90%;
+        max-height: 700px;
     }
 }
 
