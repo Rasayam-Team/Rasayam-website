@@ -52,6 +52,7 @@ urlpatterns = [
 
     # --- Legal & Policy Pages ---
     path('refund/', views.refund, name='refund'),
+    path('refund-policy/', views.refund_policy, name='refund_policy'),
     path('shipping/', views.shipping, name='shipping'),
     path('shipping-policy/', views.shipping_policy, name='shipping_policy'),
     path('terms/', views.terms, name='terms'),

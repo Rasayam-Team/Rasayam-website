@@ -453,6 +453,7 @@ def payment_fail(request):
 # --- Policy Pages ---
 def privacy(request): return render(request, 'products/privacy_policy.html')
 def refund(request): return render(request, 'products/refund.html')
+def refund_policy(request): return render(request, 'products/refund_policy.html')
 def shipping(request): return render(request, 'products/shipping.html')
 def shipping_policy(request): return render(request, 'products/shipping_policy.html')
 def terms(request): return render(request, 'products/terms.html')
