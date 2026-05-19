@@ -49,6 +49,8 @@
     </div>
 
     <nav id="main-nav">
+        <input type="checkbox" id="menu-check" class="menu-toggle" style="display: none;">
+
         <div class="container nav-flex">
             
             <!-- EXTREME LEFT: Logo & Profile -->
@@ -73,8 +75,6 @@
                     {% endif %}
                 </div>
             </div>
-
-            <input type="checkbox" id="menu-check" class="menu-toggle" style="display: none;">
 
             <!-- CENTER: Navigation Buttons -->
             <div class="nav-center">
@@ -117,13 +117,71 @@
                     </svg>
                     <span id="cart-count" class="cart-badge" style="position: absolute; top: -5px; right: -8px; background: #b89c7d; color: white; border-radius: 50%; padding: 2px 6px; font-size: 0.6rem;">{{ cart_count }}</span>
                 </a>
-                
-                <!-- Mobile Hamburger -->
-                <label for="menu-check" class="hamburger" style="margin-left: 10px;">
-                    <span></span><span></span><span></span>
-                </label>
             </div>
 
+        </div>
+
+        <div class="mobile-nav-shell">
+            <div class="mobile-nav-top">
+                <label for="menu-check" class="mobile-menu-button" aria-label="Open menu">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </label>
+
+                <a href="{% url 'index' %}" class="mobile-logo">RASAYAM</a>
+
+                <div class="mobile-actions">
+                    <a href="#mobile-search" class="mobile-action-link" aria-label="Search">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7">
+                            <circle cx="11" cy="11" r="8"></circle>
+                            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                        </svg>
+                    </a>
+
+                    {% if user.is_authenticated %}
+                        <a href="{% url 'profile' %}" class="mobile-action-link" aria-label="Profile">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7">
+                                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                                <circle cx="12" cy="7" r="4"></circle>
+                            </svg>
+                        </a>
+                    {% else %}
+                        <a href="{% url 'login' %}" class="mobile-action-link" aria-label="Login">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7">
+                                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                                <circle cx="12" cy="7" r="4"></circle>
+                            </svg>
+                        </a>
+                    {% endif %}
+
+                    <a href="{% url 'cart' %}" class="mobile-action-link mobile-cart-link" aria-label="Cart">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7">
+                            <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"></path>
+                            <line x1="3" y1="6" x2="21" y2="6"></line>
+                            <path d="M16 10a4 4 0 0 1-8 0"></path>
+                        </svg>
+                        <span class="mobile-cart-badge">{{ cart_count }}</span>
+                    </a>
+                </div>
+            </div>
+
+            <form id="mobile-search" class="mobile-search-form" action="{% url 'search' %}" method="GET">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="11" cy="11" r="8"></circle>
+                    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                </svg>
+                <input type="text" name="q" placeholder="Search Rasayam">
+            </form>
+
+            <div class="mobile-menu-panel">
+                <ul class="mobile-nav-links">
+                    <li><a href="{% url 'index' %}">HOME</a></li>
+                    <li><a href="{% url 'shop' %}">SHOP</a></li>
+                    <li><a href="{% url 'about' %}">REVIEWS</a></li>
+                    <li><a href="{% url 'contact' %}">CONTACT</a></li>
+                </ul>
+            </div>
         </div>
     </nav>
 
@@ -285,7 +343,7 @@
         }
 
         // Mobile nav: close the hamburger menu after a navigation link is tapped.
-        document.querySelectorAll('.nav-links a').forEach(link => {
+        document.querySelectorAll('.nav-links a, .mobile-nav-links a, .mobile-logo').forEach(link => {
             link.addEventListener('click', () => {
                 const menuToggle = document.getElementById('menu-check');
                 if (menuToggle) menuToggle.checked = false;
