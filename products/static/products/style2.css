@@ -404,9 +404,7 @@ body {
     text-align: center;
     position: relative;
     color: #fff;
-    /* Mobile-first: 50vh on mobile, up to 80vh on desktop */
-    height: 50vh;
-    max-height: 80vh;
+    /* Height is set in media queries only (no base height) */
     padding: clamp(20px, 3vh, 40px) clamp(12px, 3vw, 40px);
 }
 
@@ -653,8 +651,8 @@ a.btn-cart {
 /* Desktop: 769px and above */
 @media (min-width: 769px) {
     .static-hero {
-        height: 70vh;
-        max-height: 90vh;
+        height: 80vh;
+        max-height: none;
         padding: 40px 40px;
     }
 
