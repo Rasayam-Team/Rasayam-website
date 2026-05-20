@@ -398,6 +398,8 @@ body {
     width: 100%;
     background-size: cover;
     background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: scroll;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -532,6 +534,9 @@ a.btn-cart {
     .static-hero {
         height: 45vh;
         padding: 18px 12px;
+        /* Mobile: Keep cover to fill viewport */
+        background-size: cover;
+        background-position: center;
     }
 
     .hero-text h1 {
@@ -573,6 +578,9 @@ a.btn-cart {
     .static-hero {
         height: 48vh;
         padding: 22px 16px;
+        /* Mobile: Keep cover to fill viewport */
+        background-size: cover;
+        background-position: center;
     }
 
     .hero-text h1 {
@@ -615,6 +623,9 @@ a.btn-cart {
         height: 55vh;
         max-height: 70vh;
         padding: 28px 20px;
+        /* Mobile/Tablet: Keep cover to fill viewport */
+        background-size: cover;
+        background-position: center;
     }
 
     .hero-text h1 {
@@ -654,6 +665,9 @@ a.btn-cart {
         height: 95vh;
         max-height: none;
         padding: 40px 40px;
+        /* Desktop: Use contain to show full cinematic composition */
+        background-size: contain;
+        background-position: center center;
     }
 
     .banner-scroller {
