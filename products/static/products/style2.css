@@ -662,7 +662,7 @@ a.btn-cart {
 /* Desktop: 769px and above */
 @media (min-width: 769px) {
     .static-hero {
-        height: 95vh;
+        height: 110vh;
         max-height: none;
         padding: 40px 40px;
         /* Desktop: Cover fills container, top positioning preserves model/subject composition */
