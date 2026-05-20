@@ -665,9 +665,9 @@ a.btn-cart {
         height: 95vh;
         max-height: none;
         padding: 40px 40px;
-        /* Desktop: Use contain to show full cinematic composition */
-        background-size: contain;
-        background-position: center center;
+        /* Desktop: Cover fills container, top positioning preserves model/subject composition */
+        background-size: cover;
+        background-position: center top;
     }
 
     .banner-scroller {
