@@ -190,9 +190,6 @@ STORAGES = {
     },
 }
 
-# Compatibility for django-cloudinary-storage's collectstatic hook.
-STATICFILES_STORAGE = STATICFILES_BACKEND
-
 # Safe fallback protection rule
 WHITENOISE_MANIFEST_STRICT = False
 

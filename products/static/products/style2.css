@@ -346,7 +346,7 @@ body {
 /* =========================================
    NEW: CATEGORY SECTION (TABLE-LIKE GRID)
    ========================================= */
-.category-section { padding: 60px 0; border-top: 1px solid var(--border); }
+.category-section { padding: 60px 0; border-top: 1px solid var(--border); margin-top: 40px; }
 .category-section h2 { text-align: center; font-family: 'Playfair Display', serif; font-size: 2.2rem; margin-bottom: 40px; }
 
 .category-grid { 
@@ -363,11 +363,12 @@ body {
 }
 
 .category-img-box {
-    width: 50%;
+    width: 100%;
+    max-width: 350px;
     height: 450px; /* Reduced height for less bulk */
     background: #f9f9f9;
     overflow: hidden;
-    margin-bottom: 15px;
+    margin: 0 auto 15px;
     border: 1px solid #f0f0f0; /* Subtle border for table look */
     transition: 0.4s;
 }
@@ -735,16 +736,16 @@ a.btn-cart {
     }
 
     .product-info h3 {
-        min-height: 2.8em;
-        margin-bottom: 6px !important;
-        display: -webkit-box;
-        overflow-wrap: anywhere;
-        overflow: hidden;
-        font-size: 0.96rem !important;
-        line-height: 1.35;
-        -webkit-box-orient: vertical;
-        -webkit-line-clamp: 2;
-    }
+    min-height: 2.8em;
+    margin-bottom: 6px !important;
+    display: -webkit-box;
+    overflow: hidden;
+    font-size: 0.96rem !important;
+    line-height: 1.35;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    line-clamp: 2; /* <-- THIS is what Codex missed! */
+}
 
     .product-info p,
     .product-info .price {
