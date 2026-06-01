@@ -409,6 +409,7 @@ body {
     color: #fff;
     /* Height is set in media queries only (no base height) */
     padding: clamp(20px, 3vh, 40px) clamp(12px, 3vw, 40px);
+    margin-bottom: 50px;
 }
 
 .static-hero::before {
@@ -538,6 +539,7 @@ a.btn-cart {
         /* Mobile: Keep cover to fill viewport */
         background-size: cover;
         background-position: center top;
+        margin-bottom: 30px;
     }
 
     .hero-text h1 {
@@ -582,6 +584,7 @@ a.btn-cart {
         /* Mobile: Keep cover to fill viewport */
         background-size: cover;
         background-position: center top;
+        margin-bottom: 30px;
     }
 
     .hero-text h1 {
@@ -627,6 +630,7 @@ a.btn-cart {
         /* Mobile/Tablet: Keep cover to fill viewport */
         background-size: cover;
         background-position: center top;
+        margin-bottom: 40px;
     }
 
     .hero-text h1 {
@@ -669,6 +673,7 @@ a.btn-cart {
         /* Desktop: Cover fills container, top positioning preserves model/subject composition */
         background-size: cover;
         background-position: center top;
+        margin-bottom: 60px;
     }
 
     .banner-scroller {
