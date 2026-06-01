@@ -15,7 +15,7 @@ body {
     font-family: 'Poppins', sans-serif; 
     background: var(--white); 
     color: var(--royal); 
-    padding-top: 100px; 
+    padding-top: 110px; 
 }
 
 .container { max-width: 1400px; margin: 0 auto; padding: 0 4%; }
