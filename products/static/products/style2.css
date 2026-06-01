@@ -15,7 +15,7 @@ body {
     font-family: 'Poppins', sans-serif; 
     background: var(--white); 
     color: var(--royal); 
-    padding-top: 110px; 
+    padding-top: 125px; 
 }
 
 .container { max-width: 1400px; margin: 0 auto; padding: 0 4%; }
@@ -398,7 +398,7 @@ body {
 .static-hero {
     width: 100%;
     background-size: cover;
-    background-position: center;
+    background-position: center top;
     background-repeat: no-repeat;
     background-attachment: scroll;
     display: flex;
@@ -537,7 +537,7 @@ a.btn-cart {
         padding: 18px 12px;
         /* Mobile: Keep cover to fill viewport */
         background-size: cover;
-        background-position: center;
+        background-position: center top;
     }
 
     .hero-text h1 {
@@ -581,7 +581,7 @@ a.btn-cart {
         padding: 22px 16px;
         /* Mobile: Keep cover to fill viewport */
         background-size: cover;
-        background-position: center;
+        background-position: center top;
     }
 
     .hero-text h1 {
@@ -626,7 +626,7 @@ a.btn-cart {
         padding: 28px 20px;
         /* Mobile/Tablet: Keep cover to fill viewport */
         background-size: cover;
-        background-position: center;
+        background-position: center top;
     }
 
     .hero-text h1 {
